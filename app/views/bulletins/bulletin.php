@@ -90,20 +90,21 @@ $niveau = $classController->readClass($student->class_id)->level;
 $average = array_sum($subjectFinalGrades) / count($subjectFinalGrades);
 
 // Détermination de la mention
-function getMention($average) {
-    if ($average == 0) 
+function getMention($average)
+{
+    if ($average == 0)
         return 'Excellent';
-    elseif ($average >= 16) 
+    elseif ($average >= 16)
         return 'Très Bien';
-    elseif ($average >= 14) 
+    elseif ($average >= 14)
         return 'Bien';
-    elseif ($average >= 12) 
+    elseif ($average >= 12)
         return 'Assez Bien';
-    elseif ($average >= 10) 
+    elseif ($average >= 10)
         return 'Passable';
-    else 
+    else
         return 'Insuffisant';
-    
+
 }
 
 $mention = getMention($average);
@@ -159,196 +160,195 @@ $signatureBase64 = base64_encode($signature);
 
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulletin de Notes</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-        :root {
-            --primary-color: #1e40af;
-            --secondary-color: #f97316;
-            --background-color: #f3f4f6;
-            --text-color: #1f2937;
-            --border-color: #e5e7eb;
-        }
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    :root {
+        --primary-color: #1e40af;
+        --secondary-color: #f97316;
+        --background-color: #f3f4f6;
+        --text-color: #1f2937;
+        --border-color: #e5e7eb;
+    }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        .container {
-            max-width: 90rem;
-            margin: 40px auto;
-            padding: 20px;
-        }
+    .container {
+        max-width: 90rem;
+        margin: 40px auto;
+        padding: 20px;
+    }
 
-        .bulletin {
-            background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
+    .bulletin {
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
 
+    .header {
+        background: linear-gradient(135deg, var(--primary-color), #1e40af);
+        color: white;
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .logo {
+        width: 100px;
+        height: auto;
+    }
+
+    .title {
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .student-info {
+        padding: 30px;
+        background-color: #f9fafb;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+    }
+
+    .student-photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 30px;
+        border: 4px solid white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .student-details {
+        flex-grow: 1;
+        text-align: start;
+    }
+
+    .student-details p {
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+    .grades {
+        padding: 30px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    th,
+    td {
+        padding: 15px;
+        text-align: left;
+        background-color: #f9fafb;
+        transition: all 0.3s ease;
+    }
+
+    th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+
+    tr:hover td {
+        background-color: #e5e7eb;
+        transform: scale(1.02);
+    }
+
+    td:first-child,
+    th:first-child {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    td:last-child,
+    th:last-child {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .summary {
+        background-color: #f9fafb;
+        padding: 30px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .summary p {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .mention {
+        font-weight: 700;
+        color: var(--secondary-color);
+        font-size: 24px;
+    }
+
+    .signature {
+        padding: 20px;
+        text-align: right;
+        font-style: italic;
+        color: #6b7280;
+        border-top: 1px solid var(--border-color);
+    }
+
+    @media (max-width: 768px) {
         .header {
-            background: linear-gradient(135deg, var(--primary-color), #1e40af);
-            color: white;
-            padding: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            text-align: center;
         }
 
         .logo {
-            width: 100px;
-            height: auto;
-        }
-
-        .title {
-            font-size: 28px;
-            font-weight: 700;
+            margin-bottom: 20px;
         }
 
         .student-info {
-            padding: 30px;
-            background-color: #f9fafb;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
+            flex-direction: column;
+            text-align: center;
         }
 
         .student-photo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 30px;
-            border: 4px solid white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .student-details {
-            flex-grow: 1;
-            text-align: start;
-        }
-
-        .student-details p {
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .grades {
-            padding: 30px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 10px;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            background-color: #f9fafb;
-            transition: all 0.3s ease;
-        }
-
-        th {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
-        tr:hover td {
-            background-color: #e5e7eb;
-            transform: scale(1.02);
-        }
-
-        td:first-child, th:first-child {
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
-        }
-
-        td:last-child, th:last-child {
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
+            margin-right: 0;
+            margin-bottom: 20px;
         }
 
         .summary {
-            background-color: #f9fafb;
-            padding: 30px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
         }
 
         .summary p {
-            font-size: 18px;
-            font-weight: 600;
+            margin-bottom: 10px;
         }
-
-        .mention {
-            font-weight: 700;
-            color: var(--secondary-color);
-            font-size: 24px;
-        }
-
-        .signature {
-            padding: 20px;
-            text-align: right;
-            font-style: italic;
-            color: #6b7280;
-            border-top: 1px solid var(--border-color);
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .logo {
-                margin-bottom: 20px;
-            }
-
-            .student-info {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .student-photo {
-                margin-right: 0;
-                margin-bottom: 20px;
-            }
-
-            .summary {
-                flex-direction: column;
-            }
-
-            .summary p {
-                margin-bottom: 10px;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
+
 <body>
+    <div class="search-container">
+        <?php if ($database->isAdmin()): ?>
+            <button id="downloadPdf" class="add-button">Télécharger le Bulletin</button>
+            <button id="sendEmailButton" class="add-button" style="background-color: var(--primary-color);">Envoyer par
+                e-mail</button>
+        <?php endif ?>
+    </div>
     <div class="container">
         <div class="bulletin">
             <header class="header">
@@ -361,7 +361,8 @@ $signatureBase64 = base64_encode($signature);
                     <p><strong>Classe:</strong> <?= $niveau ?></p>
                     <p><strong>Matricule:</strong> <?= $student->matricule ?></p>
                 </div>
-                <img src="<?= htmlspecialchars($user->profile_picture ?? '/images/profiles/default_profile.jpg'); ?>" alt="Photo de l'étudiant" class="student-photo">
+                <img src="<?= htmlspecialchars($user->profile_picture ?? '/images/profiles/default_profile.jpg'); ?>"
+                    alt="Photo de l'étudiant" class="student-photo">
             </div>
             <div class="grades">
                 <table>
@@ -373,10 +374,10 @@ $signatureBase64 = base64_encode($signature);
                     </thead>
                     <tbody>
                         <?php foreach ($subjectFinalGrades as $subject_id => $finalGrade): ?>
-                        <tr>
-                            <td><?= $subjectController->readSubject($subject_id)->name ?></td>
-                            <td><?= number_format($finalGrade, 2) ?></td>
-                        </tr>
+                            <tr>
+                                <td><?= $subjectController->readSubject($subject_id)->name ?></td>
+                                <td><?= number_format($finalGrade, 2) ?></td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -389,10 +390,6 @@ $signatureBase64 = base64_encode($signature);
                 <p>Signature numérique: </p>
                 <img width="100" height="100" src="/qrcodes/qrcode.png" alt="code qr">
             </div>
-            <center>
-                <button id="downloadPdf">Télécharger le Bulletin</button>
-                <button id="sendEmailButton">Envoyer par e-mail</button>
-            </center>
         </div>
     </div>
 </body>
@@ -463,7 +460,7 @@ $signatureBase64 = base64_encode($signature);
 
         const formData = new FormData();
         formData.append('student_email', student.email);
-        formData.append('parent_email', 'emmanuelscre1@gmail.com');
+        formData.append('parent_email', student.parentEmail);
 
         const response = await fetch(pdfUrl);
         if (!response.ok) {
@@ -499,5 +496,3 @@ $signatureBase64 = base64_encode($signature);
     // Attacher l'événement au bouton
     document.getElementById('sendEmailButton').addEventListener('click', sendEmail);
 </script>
-
-</html>

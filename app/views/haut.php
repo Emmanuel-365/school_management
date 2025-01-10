@@ -16,7 +16,8 @@ $user = $userController->readUser($_SESSION['user_id']);
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>Keyce Management</title>
+    <link rel="icon" href="../images/Keyce_logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/student_styles.css">
