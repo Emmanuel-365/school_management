@@ -19,7 +19,14 @@ $classController = new ClassController($db);
 $subjects = $subjectController->readAllSubjects();
 ?>
 
-<?php  ?>
+<?php
+// Assuming $subjects is your array of all subjects
+$itemsPerPage = 5;
+$totalPages = ceil(count($subjects) / $itemsPerPage);
+$currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page']))) : 1;
+$offset = ($currentPage - 1) * $itemsPerPage;
+$currentPageSubjects = array_slice($subjects, $offset, $itemsPerPage);
+?>
 <div class="search-container">
     <input type="text" id="search" placeholder="Search for a subject..." />
     <?php if ($database->isAdmin()) : ?>
@@ -27,42 +34,56 @@ $subjects = $subjectController->readAllSubjects();
     <?php endif ?>
 </div>
 
-<table border="1" id="subjectTable">
+<table id="subjectTable">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Teacher</th>
-            <th>Niveau</th>
-            <th>Actions</th>
+            <th><center>ID</center></th>
+            <th><center>Name</center></th>
+            <th><center>Teacher</center></th>
+            <th><center>Niveau</center></th>
+            <th><center>Actions</center></th>
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($subjects as $subject): ?>
+        <?php foreach ($currentPageSubjects as $subject): ?>
             <?php if($subject->teacher_id == $_SESSION['user_id'] || $_SESSION['user_role'] === 'admin') : ?>
             <tr>
-                <td><?php echo $subject->id; ?></td>
-                <td><?php echo htmlspecialchars($subject->name); ?></td>
+                <td><center><?php echo $subject->id; ?></center></td>
+                <td><center><?php echo htmlspecialchars($subject->name); ?></center></td>
                 <td>
-                    <?= $subject->teacher_id !== null 
+                    <center><?= $subject->teacher_id !== null 
                         ? htmlspecialchars($teacherController->readTeacherWithUsersInformations($subject->teacher_id)->first_name . ' ' . $teacherController->readTeacherWithUsersInformations($subject->teacher_id)->last_name) 
                         : 'aucun' 
-                    ?>
+                    ?></center>
                 </td>
-                <td><?= htmlspecialchars($subject->level); ?></td>
+                <td><center><?= htmlspecialchars($subject->level); ?></center></td>
                 <td>
-                    <?php if($database->isAdmin()) : ?>
+                    <center><?php if($database->isAdmin()) : ?>
                         <a href="/subjects/update?id=<?php echo $subject->id; ?>" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a> 
                         <a href="/subjects/delete?id=<?php echo $subject->id; ?>" class="action-button delete"><i class="fa-solid fa-trash"></i></a>
                     <?php elseif($database->isTeacher()) : ?>
                         <a href="/students?subject_id=<?=$subject->id?>" class="action-button update"><i class="fa-solid fa-eye"></i></a>
-                    <?php endif ?>
+                    <?php endif ?></center>
                 </td>
             </tr>
             <?php endif ?>
         <?php endforeach; ?>
     </tbody>
 </table>
+<?php if (count($subjects) > 5): ?>
+    <div class="navigation">
+        <?php if ($currentPage > 1): ?>
+            <a href="?page=<?php echo $currentPage - 1; ?>" id="prevPage" class="nav-button prev-button">
+                <i class="fas fa-chevron-left"></i> Précédent
+            </a>
+        <?php endif; ?>
+        <?php if ($currentPage < $totalPages): ?>
+            <a href="?page=<?php echo $currentPage + 1; ?>" id="nextPage" class="nav-button next-button">
+                Suivant <i class="fas fa-chevron-right"></i>
+            </a>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
 
 <script>
     const searchInput = document.getElementById('search');
@@ -90,6 +111,3 @@ $subjects = $subjectController->readAllSubjects();
     });
 </script>
 
-    <?php  ?>
-</body>
-</html>

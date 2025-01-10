@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group dynamic-dropdown">
             <label for="class_id">Class:</label>
-             <input type="text" id="class_id" name="class_id"  placeholder="Ex: Bachelor 1"  readonly>
+             <input type="text" id="class_id" name="class_id"  placeholder="Ex: Bachelor 1">
                 <ul class="options">
                 <?php foreach ($classes as $class): ?>
                     <li value="<?php echo $class->id; ?>" data-class="<?php echo $student->class_name; ?>"><?php echo $class->name; ?></li>

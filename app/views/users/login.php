@@ -11,12 +11,8 @@ $database = new Database();
 
 $db = $database->getConnection();
 
-// Initialisation des contrôleurs
-$userController = new UserController($db);
-
-if(isset($_SESSION['user_id'])){
-    chooseDashboard();
-}
+if(isset($_SESSION['user_id']))
+   chooseDashboard();
 
 function chooseDashboard(){
     switch ($_SESSION['user_role']) {
@@ -39,23 +35,16 @@ function chooseDashboard(){
 }
 
 
-
+// Initialisation des contrôleurs
+$userController = new UserController($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
     if ($userController->login($username, $password)) {
-        $lastLogin = $userController->readUser($_SESSION['user_id'])->last_login;
-        $email = $userController->readUser($_SESSION['user_id'])->email;
-        if($lastLogin){
-            chooseDashboard();
-            $last_login = date('Y-m-d H:i:s');
-            $userController->updateUser($_SESSION['user_id'], ['email' => $email, 'last_login' => $last_login ]);
-        }else{
-            header('Location: /changepassword');
-            exit();
-        }    } else {
+        chooseDashboard();
+    } else {
         echo 'Invalid username or password.';
     }
 }

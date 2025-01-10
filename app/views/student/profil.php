@@ -31,7 +31,7 @@ if (!$student) {
 <div class="dashboard">
     <div class="content">
         <div class="dashboard-content">
-            <h1>Profil Étudiant</h1>
+            <h3>Profil Étudiant</h3>
             <div class="profile-card">
             <img 
                     class="profile-picture" 

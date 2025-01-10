@@ -44,9 +44,9 @@ foreach ($grades as $grade) {
 
 ?>
 
-<table border="1">
+<table >
     <tr>
-        <th>Subjec</th>
+        <th>Subject</th>
         <th>CC</th>
         <th>TP</th>
         <th>Rattrapage</th>

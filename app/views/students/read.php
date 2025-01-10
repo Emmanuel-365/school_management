@@ -28,35 +28,42 @@ if(isset($_GET['subject_id'])) {
     $students = $studentController->readAllStudentsWithUsersInformations();
 ?>
 
-<?php ?>
+<?php
+// Assuming $students is your array of all students
+$itemsPerPage = 5;
+$totalPages = ceil(count($students) / $itemsPerPage);
+$currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page']))) : 1;
+$offset = ($currentPage - 1) * $itemsPerPage;
+$currentPageStudents = array_slice($students, $offset, $itemsPerPage);
+?>
             <div class="search-container">
-                <input type="text" id="search" placeholder="Search for a student..." />
+                <input type="text" id="search" data-translate-placeholder="search_placeholder" />
                 <?php if ($database->isAdmin()) : ?>
-                    <a href="/students/create" class="add-button">Add Student</a>
+                    <a href="/students/create" class="add-button" data-translate="add_student"></a>
                 <?php endif ?>
             </div>
             <table id="studentsTable">
                 <thead>
                     <tr>
                         <th>Profile</th>
-                        <th>Name</th>
-                        <th>Class</th>
+                        <th data-translate="student_name"></th>
+                        <th data-translate="class"></th>
                         <?php if($database->isAdmin()) : ?>
-                        <th>Parent</th>
-                        <th>Remaining Fee</th>
-                        <th>Status</th>
+                            <th data-translate="parent"></th>
+                            <th data-translate="remaining_fee"></th>
+                            <th data-translate="status"></th>
                         <th>Actions</th>
                         <?php endif ?>
                         <?php if($database->isTeacher()) : ?>
                             <th>CC</th>
                             <th>TP</th>
-                            <th>Rattrapage</th>
-                            <th>Exam</th>
+                            <th data-translate="rattrapage"></th>
+                            <th data-translate="exam"></th>
                         <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($students as $student): 
+                    <?php foreach ($currentPageStudents as $student): 
                         $totalFee = $student->class_id != null ? $classController->readClass($student->class_id)->total_fee : 0;
                         $remainingFee = $student->remaining_fee;
                         $status = $totalFee == 0 ? 'No Fee Data' : ($remainingFee == 0 ? 'Paid' : ($remainingFee < $totalFee ? 'Partial' : 'Unpaid'));
@@ -109,7 +116,7 @@ if(isset($_GET['subject_id'])) {
                                 <?php else: ?>
                                     <?=$cc?>
                                     <a href="/grades/update?id=<?= $ccId ?>" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <a href="/grades/delete?id=<?= $ccId ?>" class="action-button delete"><i class="fa-solid fa-trash"></i></a>
+                                    <!-- <a href="/grades/delete?id=<?= $ccId ?>" class="action-button delete"><i class="fa-solid fa-trash"></i></a> -->
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -118,7 +125,7 @@ if(isset($_GET['subject_id'])) {
                                 <?php else: ?>
                                     <?=$tp?>
                                     <a href="/grades/update?id=<?= $tpId ?>" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <a href="/grades/delete?id=<?= $tpId ?>" class="action-button delete"><i class="fa-solid fa-trash"></i></a>
+                                    <!-- <a href="/grades/delete?id=<?= $tpId ?>" class="action-button delete"><i class="fa-solid fa-trash"></i></a> -->
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -127,7 +134,7 @@ if(isset($_GET['subject_id'])) {
                                 <?php else: ?>
                                     <?=$rattrapage?>
                                     <a href="/grades/update?id=<?= $rattrapageId ?>" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <a href="/grades/delete?id=<?= $rattrapageId ?>" class="action-button delete"><i class="fa-solid fa-trash"></i></a>
+                                    <!-- <a href="/grades/delete?id=<?= $rattrapageId ?>" class="action-button delete"><i class="fa-solid fa-trash"></i></a> -->
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -136,7 +143,7 @@ if(isset($_GET['subject_id'])) {
                                 <?php else: ?>
                                     <?=$exam?>
                                     <a href="/grades/update?id=<?= $examId ?>" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <a href="/grades/delete?id=<?= $examId ?>" class="action-button delete"><i class="fa-solid fa-trash"></i></a>
+                                    <!-- <a href="/grades/delete?id=<?= $examId ?>" class="action-button delete"><i class="fa-solid fa-trash"></i></a> -->
                                 <?php endif; ?>
                             </td>
                         <?php endif; ?>
@@ -152,7 +159,17 @@ if(isset($_GET['subject_id'])) {
                     <?php endforeach; ?>
                 </tbody>
             </table>
-
-
-        </div>
-        <?php ?>
+            <?php if (count($students) > 5): ?>
+    <div class="navigation">
+        <?php if ($currentPage > 1): ?>
+            <a href="?page=<?php echo $currentPage - 1; ?>" id="prevPage" class="nav-button prev-button" data-translate="previous">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        <?php endif; ?>
+        <?php if ($currentPage < $totalPages): ?>
+            <a href="?page=<?php echo $currentPage + 1; ?>" id="nextPage" class="nav-button next-button" data-translate="next">
+                 <i class="fas fa-chevron-right"></i>
+            </a>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>

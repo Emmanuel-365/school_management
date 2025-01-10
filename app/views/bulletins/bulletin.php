@@ -459,13 +459,12 @@ $signatureBase64 = base64_encode($signature);
 
     // Fonction pour envoyer le bulletin par e-mail
     async function sendEmail() {
-        const pdfUrl = '/path/to/your/bulletin_signed.pdf'; // Remplace cette URL par l'emplacement réel du fichier sur ton serveur
+        const pdfUrl = '/uploads/bulletin_signed.pdf';
 
         const formData = new FormData();
         formData.append('student_email', student.email);
         formData.append('parent_email', 'emmanuelscre1@gmail.com');
 
-        // Utiliser Fetch pour récupérer le fichier PDF depuis le serveur
         const response = await fetch(pdfUrl);
         if (!response.ok) {
             alert('Le fichier PDF n\'a pas pu être récupéré.');
@@ -481,7 +480,7 @@ $signatureBase64 = base64_encode($signature);
                 body: formData
             });
 
-            const responseText = await sendResponse.text(); // Utilise text() pour obtenir la réponse brute
+            const responseText = await sendResponse.text();
             console.log('Réponse brute du serveur :', responseText);
 
             const result = JSON.parse(responseText); // Parser la réponse JSON

@@ -58,6 +58,7 @@ class UserController {
         $user = $this->userModel->findBy("username", $username);
         if ($user && password_verify($password, $user->password)) {
             // Mettre à jour la dernière date de connexion
+            $user->last_login = date('Y-m-d H:i:s');
             $this->userModel->update($user->id, ['last_login' => $user->last_login]);
             // Stocker l'ID de l'utilisateur et son rôle dans la session
             $_SESSION['user_id'] = $user->id;
