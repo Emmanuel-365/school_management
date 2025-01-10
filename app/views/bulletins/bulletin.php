@@ -452,7 +452,6 @@ $signatureBase64 = base64_encode($signature);
                 }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi du PDF au serveur :', error);
-                alert('Une erreur est survenue.');
             }
         });
     });
