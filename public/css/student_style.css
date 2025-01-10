@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+.containerParent {
+    display: flex;
+    align-items: flex-center;
+    gap: 100px;
+    margin-top: 20px;
+}
+
+.carde-container {
+    width: 450px;
+    height: 280px;
+    perspective: 1000px;
+    justify-content: center;
+}
+
+.carde {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+.carde:hover {
+    transform: rotateY(180deg);
+}
+
+.carde-front,
+.carde-back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Filigrane KEYCE */
+.carde-front::before,
+.carde-back::before {
+    content: "KEYCE INSTITUTE CARD";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.1); /* Transparence pour le filigrane */
+    z-index: 0; /* Derrière les autres contenus */
+    pointer-events: none;
+}
+
+.carde-front {
+    background: linear-gradient(135deg, #63e0cb, #47b4a2);
+    color: #333;
+}
+
+.carde-back {
+    background: linear-gradient(135deg, #63e0cb, #47b4a2);
+    color: #333;
+    transform: rotateY(180deg);
+}
+
+.sim-card {
+    position: absolute;
+    top: 95px; /* Ajuste la distance par rapport au haut de la carte */
+    left: 20px; /* Place l'image à l'extrémité gauche */
+    z-index: 1; /* Assure que l'image reste visible */
+}
+
+.sim-card img {
+    width: 110px; /* Réduction de la taille de l'image */
+    height: auto; /* Maintient les proportions de l'image */
+    border-radius: 5px; /* Ajoute un léger arrondi pour la cohérence du design */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajoute une ombre légère pour un effet esthétique */
+}
+
+.school-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #1e3a8a;
+    width: 100%;
+}
+
+.student-photo {
+    width: 160px;
+    height: 120px;
+    border-radius: 10%;
+    /* object-fit: cover; */
+    margin-right: 20px;
+}
+
+.student-info {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.info p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.carde-number {
+    align-self: flex-end;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e3a8a;
+}
+
+.school-logo img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+    align-self: center;
+    z-index: 1;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contact-info p {
+    margin: 5px 0;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.contact-info i {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.download-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.download-button button {
+    background-color: #f97316;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.download-button button:hover {
+    background-color: #ea580c;
+}
+
+/* carte de statistiques */
+.carte {
+    background: var(--secondary-color);
+    color: var(--text-color);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.carte h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.carte p {
+    margin: 5px 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}

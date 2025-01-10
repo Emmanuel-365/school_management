@@ -1,0 +1,17 @@
+{
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "require": {
+      "symfony/routing": "^7.2",
+      "symfony/http-foundation": "^7.2",
+      "twig/twig": "^3.17",
+      "docusign/esign-client": "^8.0",
+      "phpmailer/phpmailer": "^6.9",
+      "chillerlan/php-qrcode": "^5.0",
+      "endroid/qr-code": "^6.0",
+    "tecnickcom/tcpdf": "*"
+  }
+}
