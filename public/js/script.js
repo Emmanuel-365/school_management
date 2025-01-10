@@ -114,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-   
     
 });
 // code de recherche dynamique
@@ -146,4 +145,3 @@ const searchInput = document.getElementById('search');
             filterStudents(keyword);
         }, 300));
 // fin
-

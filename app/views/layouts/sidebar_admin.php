@@ -14,7 +14,7 @@ if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin'){
             </div>
             <nav>
                 <ul>
-                    <li ><a href="/admin" id="nav-dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li ><a href="/admin" id="nav-dashboard" data-translate="dash"><i class="fas fa-home"></i> </a></li>
                     <li><a href="/students" id="nav-students"><i class="fas fa-user-graduate"></i> Etudiants</a></li>
                     <li><a href="/teachers" id="nav-teachers"><i class="fas fa-chalkboard-teacher"></i> Enseignants</a></li>
                     <li><a href="/subjects" id="nav-subjects"><i class="fas fa-book"></i> Matières</a></li>

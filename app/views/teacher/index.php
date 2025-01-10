@@ -42,7 +42,6 @@ $bulletinController = new BulletinController($db);
     <div class="dashboard">
         <main class="content">
                 <div class="dashboard-content">
-                <h1>Welcome to your Teacher Management Side</h1>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <i class="fas fa-user-graduate"></i>

@@ -19,12 +19,19 @@ $studentController = new StudentController($db);
 $bulletins = $bulletinController->readAllBulletins();
 ?>
 
-<?php ?>
+<?php
+// Assuming $bulletins is your array of all bulletins
+$itemsPerPage = 5;
+$totalPages = ceil(count($bulletins) / $itemsPerPage);
+$currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page']))) : 1;
+$offset = ($currentPage - 1) * $itemsPerPage;
+$currentPageBulletins = array_slice($bulletins, $offset, $itemsPerPage);
+?>
 <div class="search-container">
                 <input type="text" id="search" placeholder="Search for a bulletins..." />
                 <a href="/bulletins/create" class="add-button">Add Bulletin</a>
             </div>
-    <table border="1">
+    <table >
         <tr>
             <th>ID</th>
             <th>Student</th>
@@ -34,7 +41,7 @@ $bulletins = $bulletinController->readAllBulletins();
             <th>Comments</th>
             <th>Actions</th>
         </tr>
-        <?php foreach ($bulletins as $bulletin): ?>
+        <?php foreach ($currentPageBulletins as $bulletin): ?>
             <tr>
                 <td><?php echo $bulletin->id; ?></td>
                 <td><?php echo $bulletin->student_id; ?></td>
@@ -57,4 +64,17 @@ $bulletins = $bulletinController->readAllBulletins();
             </tr>
         <?php endforeach; ?>
     </table>
-<?php ?>
+    <?php if (count($bulletins) > 5): ?>
+    <div class="navigation">
+        <?php if ($currentPage > 1): ?>
+            <a href="?page=<?php echo $currentPage - 1; ?>" id="prevPage" class="nav-button prev-button">
+                <i class="fas fa-chevron-left"></i> Précédent
+            </a>
+        <?php endif; ?>
+        <?php if ($currentPage < $totalPages): ?>
+            <a href="?page=<?php echo $currentPage + 1; ?>" id="nextPage" class="nav-button next-button">
+                Suivant <i class="fas fa-chevron-right"></i>
+            </a>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>

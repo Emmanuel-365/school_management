@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $matricule = $currentYear . $className . str_pad($studentCount + 1, 3, '0', STR_PAD_LEFT);
 
     $data['matricule'] = $matricule;
-    $data['remaining_fee'] = $classController->readClass($_POST['class_id'])->total_fee; 
+    $data['remaining_fee'] = $classController->readClass($data['class_id'])->total_fee; 
 
     try {
         $studentController->createStudent($data);
@@ -85,16 +85,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 
-<li?php ?>
-<h3>Adding student page</h3>
+
+<h3 data-translate="adding_student"></h3>
     <form method="POST" enctype="multipart/form-data">
         <div class="form-row">
             <div class="form-group">
-            <label for="first_name">First Name:</label>
+            <label for="first_name" data-translate="first_name"></label>
             <input type="text" id="first_name" name="first_name" required>
             </div>
             <div class="form-group">
-            <label for="last_name">Last Name:</label>
+            <label for="last_name" data-translate="last_name"></label>
             <input type="text" id="last_name" name="last_name" required>
             </div>
         </div>
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
-            <label for="phone">Phone:</label>
+            <label for="phone" data-translate="phone"></label>
             <input type="text" id="phone" name="phone" required>
             <div class="error-message"></div>
             </div>
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-row">
             <div class="form-group">
-            <label for="date_of_birth">Date of Birth:</label>
+            <label for="date_of_birth" data-translate="date_of_birth"></label>
             <input type="date" id="date_of_birth" name="date_of_birth" required>
             <div class="error-message"></div>
             </div>

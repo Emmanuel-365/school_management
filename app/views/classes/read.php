@@ -13,13 +13,20 @@ $classController = new ClassController($db);
 $classes = $classController->readAllClasses();
 ?>
 
-<?php  ?>
+<?php
+// Assuming $classes is your array of all classes
+$itemsPerPage = 5;
+$totalPages = ceil(count($classes) / $itemsPerPage);
+$currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page']))) : 1;
+$offset = ($currentPage - 1) * $itemsPerPage;
+$currentPageClasses = array_slice($classes, $offset, $itemsPerPage);
+?>
 <div class="search-container">
     <input type="text" id="search" placeholder="Search for a class..." />
     <a href="/classes/create" class="add-button">Add Class</a>
 </div>
 
-<table border="1" id="classTable">
+<table id="classTable">
     <thead>
         <tr>
             <th>ID</th>
@@ -30,7 +37,7 @@ $classes = $classController->readAllClasses();
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($classes as $class): ?>
+        <?php foreach ($currentPageClasses as $class): ?>
             <tr>
                 <td><?php echo htmlspecialchars($class->id); ?></td>
                 <td><?php echo htmlspecialchars($class->name); ?></td>
@@ -44,6 +51,20 @@ $classes = $classController->readAllClasses();
         <?php endforeach; ?>
     </tbody>
 </table>
+<?php if (count($classes) > 5): ?>
+    <div class="navigation">
+        <?php if ($currentPage > 1): ?>
+            <a href="?page=<?php echo $currentPage - 1; ?>" id="prevPage" class="nav-button prev-button">
+                <i class="fas fa-chevron-left"></i> Précédent
+            </a>
+        <?php endif; ?>
+        <?php if ($currentPage < $totalPages): ?>
+            <a href="?page=<?php echo $currentPage + 1; ?>" id="nextPage" class="nav-button next-button">
+                Suivant <i class="fas fa-chevron-right"></i>
+            </a>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
 
 <script>
     const searchInput = document.getElementById('search');

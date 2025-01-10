@@ -5,7 +5,7 @@ $routes = [
     "/" => "home.php",
     '/login' => 'users/login.php',
     '/logout' => 'users/logout.php',
-    '/changepassword' => 'users/changePassword.php',
+    '/change_password' => 'users/change_password.php',
 
     '/admin/' => 'admin/index.php', 
     '/admin' => 'admin/index.php',  

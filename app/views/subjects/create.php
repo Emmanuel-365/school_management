@@ -46,14 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required>
             </div>
-            <div class="form-group">
+            <div class="form-group dynamic-dropdown">
             <label for="teacher_id">Teacher:</label>
-        <select id="teacher_id" name="teacher_id">
-            <option value="aucun">aucun</option>
+            <input type="text" id="teacher_id" name="teacher_id" placeholder="Ex: Batchato">
+            <ul class="options">
             <?php foreach ($teachers as $teacher): ?>
-                <option value="<?php echo $teacher->id; ?>"><?php echo $teacher->first_name . ' ' . $teacher->last_name; ?></option>
-            <?php endforeach; ?>
-        </select>
+                        <li value="<?php echo $teacher->id; ?>"><?php echo $teacher->first_name . ' ' . $teacher->last_name; ?></li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
         </div>
         <div class="form-row">
