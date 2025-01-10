@@ -1,0 +1,12 @@
+# Cache de Composer
+vendor/
+
+#fichiers de configuration 
+config/
+
+# Configurations locales
+.env
+
+# Logs et fichiers temporaires
+*.log
+*.cache
