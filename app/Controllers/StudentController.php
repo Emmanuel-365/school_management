@@ -70,7 +70,7 @@ class StudentController {
         return $this->studentModel->read($id);
     }
 
-    public function readStudentWithUsersInformations($id) {
+    public function readStudentWithUsersInformations($id):StudentModel {
         return $this->studentModel->readWithUsersInformations($id);
     }
 
