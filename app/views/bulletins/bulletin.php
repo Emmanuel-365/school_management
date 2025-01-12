@@ -35,6 +35,11 @@ if (!$student) {
     exit;
 }
 
+$subjects = $subjectController->readSubjectByLevel($classController->readClass($student->class_id)->level);
+
+// Extraire les id des subjects
+$SubjectIds = array_map(fn($subject) => $subject->id, $subjects);
+
 $parentEmail = $parentController->readParent($student->parent_id)->email;
 
 // Récupération des notes de l'étudiant
@@ -43,6 +48,21 @@ if (empty($grades)) {
     echo "L'étudiant n'a pas de notes disponibles pour générer le bulletin.";
     exit;
 }
+
+// Extraire tous les subject_id
+$gradeSubjectIds = array_map(fn($grade) => $grade->subject_id, $grades);
+
+// Obtenir les subject_id uniques
+$uniqueSubjectIds = array_unique($gradeSubjectIds);
+
+// Vérifier si tous les subject IDs des subjects sont dans les grades
+$missingIds = array_diff($SubjectIds, $gradeSubjectIds);
+
+// if (empty($missingIds)) {
+//     echo "Tous les sujets sont présents dans les grades.\n";
+// } else {
+//     echo "Les IDs suivants ne sont pas dans les grades : " . implode(', ', $missingIds) . "\n";
+// }
 
 $finalGrades = [];
 
@@ -389,10 +409,24 @@ $signatureBase64 = base64_encode($signature);
                 <p>Signature numérique: </p>
                 <img width="100" height="100" src="/qrcodes/qrcode.png" alt="code qr">
             </div>
+                <div class="container alert alert-danger">
+                    <?php
+                        if(!empty($missingIds)){
+                            echo "Les notes de toutes les matières n'ont pas été renseignées.";
+                            $missingNames = [];
+                            foreach ($missingIds as $id) {
+                                $missingNames[] = $subjectController->readSubject($id)->name;
+                            }
+                            echo "  Les matières restantes sont " . implode(", ", $missingNames) ."";
+                        }
+                    ?>
+                </div>
+            <?php if(empty($missingIds)) : ?>
             <center>
                 <button id="downloadPdf">Télécharger le Bulletin</button>
                 <button id="sendEmailButton">Envoyer par e-mail</button>
             </center>
+            <?php endif ?>
         </div>
     </div>
 </body>

@@ -18,6 +18,10 @@ class SubjectController {
         return $this->subjectModel->read($id);
     }
 
+    public function readSubjectByLevel($level) {
+        return $this->subjectModel->findManyBy('level', $level);
+    }
+
     // Méthode pour lire toutes les matières
     public function readAllSubjects() {
         return $this->subjectModel->readAll();

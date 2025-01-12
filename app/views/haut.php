@@ -20,6 +20,7 @@ $user = $userController->readUser($_SESSION['user_id']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/student_styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgg8bPyCHkK2bC2yn9G5IybEGKXRvPbR2wBpEj6Qp1LkKVOxpLZJOyN" crossorigin="anonymous">
     <!-- pour le PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
