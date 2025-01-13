@@ -12,6 +12,7 @@
       "phpmailer/phpmailer": "^6.9",
       "chillerlan/php-qrcode": "^5.0",
       "endroid/qr-code": "^6.0",
-    "tecnickcom/tcpdf": "*"
+    "tecnickcom/tcpdf": "*",
+    "spipu/html2pdf": "^5.3"
   }
 }
