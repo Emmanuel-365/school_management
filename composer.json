@@ -13,6 +13,12 @@
       "chillerlan/php-qrcode": "^5.0",
       "endroid/qr-code": "^6.0",
     "tecnickcom/tcpdf": "*",
-    "spipu/html2pdf": "^5.3"
+    "guzzlehttp/guzzle": "^7.9",
+    "gemini-api-php/client": "^1.6"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
   }
 }
