@@ -34,35 +34,6 @@ $studentCard = $studentCardController->readStudentCardByStudent($student_id);
     <link rel="stylesheet" href="/css/student_style.css">
 
 </head>
-<style>
-    /* From Uiverse.io by adamgiebl */
-    .cssbuttons-io-button {
-    display: flex;
-    align-items: center;
-    font-family: inherit;
-    font-weight: 200;
-    height: 50px;
-    font-size: 14px; /* Réduit la taille de la police */
-    padding: 0.5em 1em; /* Réduit le rembourrage */
-    color: white;
-    background: #ff7d00;
-    background: linear-gradient(0deg, rgba(255, 125, 0, 1) 0%, rgba(255, 95, 109, 1) 100%);
-    border: 1px solid #ff7d00; /* Réduit l'épaisseur de la bordure */
-    border-radius: 15em; /* Ajuste le rayon des coins */
-}
-    .cssbuttons-io-button svg {
-        margin-right: 8px;
-    }
-
-    .cssbuttons-io-button:hover {
-        border-color: white;
-        box-shadow: 0 0.5em 1.5em -0.5em #bf5800;
-    }
-
-    .cssbuttons-io-button:active {
-        box-shadow: 0 0.3em 1em -0.5em #bf5800;
-    }
-</style>
 
 <body>
     <div class="dashboard">
@@ -112,5 +83,19 @@ $studentCard = $studentCardController->readStudentCardByStudent($student_id);
                 </button>
                </center>
                 </div>
+                <div id="chatbot-container" class="chatbot-closed">
+            <div id="chatbot-header">
+                <h3><i class="fas fa-robot"></i> Assistant Étudiant</h3>
+                <button id="close-chatbot"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="chat-messages"></div>
+            <form id="chat-form">
+                <input type="text" id="user-input" placeholder="Posez votre question ici...">
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+        <button id="open-chatbot" class="chatbot-toggle">
+            <i class="fas fa-comments"></i> Besoin d'aide ?
+        </button>
             </div>
             <?php ?>

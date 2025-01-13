@@ -20,7 +20,7 @@ if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin'){
                     <li><a href="/subjects" id="nav-subjects"><i class="fas fa-book"></i> Matières</a></li>
                     <li><a href="/classes" id="nav-classes"><i class="fas fa-calendar-alt"></i> Classes</a></li>
                     <li><a href="/payments" id="nav-payments"><i class="fa-solid fa-credit-card"></i> Versements</a></li>
-                    <li><a href="/bulletins" id="nav-bulletins"><i class="fas fa-chart-bar"></i> Manage Bulletins</a></li>
+                    <li><a href="/bulletins" id="nav-bulletins"><i class="fa-solid fa-graduation-cap"></i> Manage Bulletins</a></li>
                     <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
                 </ul>
             </nav>

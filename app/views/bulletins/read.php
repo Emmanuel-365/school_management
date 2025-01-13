@@ -27,44 +27,48 @@ $currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page
 $offset = ($currentPage - 1) * $itemsPerPage;
 $currentPageBulletins = array_slice($bulletins, $offset, $itemsPerPage);
 ?>
+        <?php if ($database->isAdmin()): ?>
+
 <div class="search-container">
-                <input type="text" id="search" placeholder="Search for a bulletins..." />
-                <a href="/bulletins/create" class="add-button">Add Bulletin</a>
-            </div>
-    <table >
+    <input type="text" id="search" placeholder="Search for a bulletins..." />
+    <a href="/bulletins/create" class="add-button">Add Bulletin</a>
+</div>
+<?php endif ?>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Student</th>
+        <th>Class</th>
+        <th>Period</th>
+        <th>Issue Date</th>
+        <th>Comments</th>
+        <th>Actions</th>
+    </tr>
+    <?php foreach ($currentPageBulletins as $bulletin): ?>
         <tr>
-            <th>ID</th>
-            <th>Student</th>
-            <th>Class</th>
-            <th>Period</th>
-            <th>Issue Date</th>
-            <th>Comments</th>
-            <th>Actions</th>
-        </tr>
-        <?php foreach ($currentPageBulletins as $bulletin): ?>
-            <tr>
-                <td><?php echo $bulletin->id; ?></td>
-                <td><?php echo $bulletin->student_id; ?></td>
-                <td><?php echo $bulletin->class_id; ?></td>
-                <td><?php echo $bulletin->period; ?></td>
-                <td><?php echo $bulletin->issue_date; ?></td>
-                <td><?php echo $bulletin->comments; ?></td>
-                <td>
+            <td><?php echo $bulletin->id; ?></td>
+            <td><?php echo $bulletin->student_id; ?></td>
+            <td><?php echo $bulletin->class_id; ?></td>
+            <td><?php echo $bulletin->period; ?></td>
+            <td><?php echo $bulletin->issue_date; ?></td>
+            <td><?php echo $bulletin->comments; ?></td>
+            <td>
                 <a href="/bulletins/bulletin?student_id=<?php echo $bulletin->student_id; ?>" class="action-button see">
                     <i class="fas fa-eye"></i>
                 </a>
+        <?php if ($database->isAdmin()): ?>
                 <a href="/bulletins/update?id=<?php echo $bulletin->id; ?>" class="action-button update">
                     <i class="fa-solid fa-edit"></i>
                 </a>
                 <a href="/bulletins/delete?id=<?php echo $bulletin->id; ?>" class="action-button delete">
                     <i class="fa-solid fa-trash"></i>
                 </a>
-
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
-    <?php if (count($bulletins) > 5): ?>
+        <?php endif ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+<?php if (count($bulletins) > 5): ?>
     <div class="navigation">
         <?php if ($currentPage > 1): ?>
             <a href="?page=<?php echo $currentPage - 1; ?>" id="prevPage" class="nav-button prev-button">
