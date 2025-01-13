@@ -16,11 +16,12 @@ $user = $userController->readUser($_SESSION['user_id']);
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>Keyce Management</title>
+    <link rel="icon" href="../images/Keyce_logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/student_styles.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgg8bPyCHkK2bC2yn9G5IybEGKXRvPbR2wBpEj6Qp1LkKVOxpLZJOyN" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/chatbot.css">
     <!-- pour le PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
@@ -41,6 +42,12 @@ $user = $userController->readUser($_SESSION['user_id']);
             <header>
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
                 <div class="language-selector">
+                    <!-- Conteneur du drapeau sélectionné -->
+                    <div class="flag-container">
+                        <img id="selected-flag" src="/images/flags/en.png" alt="English">
+                    </div>
+
+                    <!-- Sélecteur de langue -->
                     <select id="language-select">
                         <option value="en" data-flag="/images/flags/en.png">English</option>
                         <option value="fr" data-flag="/images/flags/fr.png">Français</option>
