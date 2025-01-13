@@ -28,6 +28,7 @@ $bulletinController = new BulletinController($db);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>keyce management</title>
@@ -37,10 +38,11 @@ $bulletinController = new BulletinController($db);
     <link rel="stylesheet" href="../student_style.css">
 
 </head>
+
 <body>
     <div class="dashboard">
         <main class="content">
-                <div class="dashboard-content">
+            <div class="dashboard-content">
                 <h1>Welcome to your Student Management Side</h1>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -76,6 +78,20 @@ $bulletinController = new BulletinController($db);
                 </div>
             </div>
         </main>
+        <div id="chatbot-container" class="chatbot-closed">
+        <div id="chatbot-header">
+            <h3><i class="fas fa-robot"></i> Assistant Étudiant</h3>
+            <button id="close-chatbot"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="chat-messages"></div>
+        <form id="chat-form">
+            <input type="text" id="user-input" placeholder="Posez votre question ici..." autocomplete="off">
+            <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+    <button id="open-chatbot" class="chatbot-toggle">
+        <i class="fas fa-comments"></i> Besoin d'aide ?
+    </button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../script.js"></script>
@@ -83,4 +99,5 @@ $bulletinController = new BulletinController($db);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
     </script>
 </body>
+
 </html>

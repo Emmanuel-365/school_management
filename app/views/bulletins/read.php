@@ -27,10 +27,13 @@ $currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page
 $offset = ($currentPage - 1) * $itemsPerPage;
 $currentPageBulletins = array_slice($bulletins, $offset, $itemsPerPage);
 ?>
+        <?php if ($database->isAdmin()): ?>
+
 <div class="search-container">
     <input type="text" id="search" placeholder="Search for a bulletins..." />
     <a href="/bulletins/create" class="add-button">Add Bulletin</a>
 </div>
+<?php endif ?>
 <table>
     <tr>
         <th>ID</th>

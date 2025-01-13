@@ -83,5 +83,19 @@ $studentCard = $studentCardController->readStudentCardByStudent($student_id);
                 </button>
                </center>
                 </div>
+                <div id="chatbot-container" class="chatbot-closed">
+            <div id="chatbot-header">
+                <h3><i class="fas fa-robot"></i> Assistant Étudiant</h3>
+                <button id="close-chatbot"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="chat-messages"></div>
+            <form id="chat-form">
+                <input type="text" id="user-input" placeholder="Posez votre question ici...">
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+        <button id="open-chatbot" class="chatbot-toggle">
+            <i class="fas fa-comments"></i> Besoin d'aide ?
+        </button>
             </div>
             <?php ?>
