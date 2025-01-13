@@ -8,69 +8,76 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use Spipu\Html2Pdf\Html2Pdf;
 
-
+// Initialisation de la base de données et des contrôleurs
 $database = new Database();
 $db = $database->getConnection();
 
-// Initialisation des contrôleurs
 $paymentController = new PaymentController($db);
 $studentController = new StudentController($db);
 $parentController = new ParentController($db);
 $classController = new ClassController($db);
 
-if(isset($_GET['student_id'])){
-    $student = $studentController->readStudent($_GET['student_id']);
+// Vérification de l'ID de l'étudiant
+if (isset($_GET['student_id'])) {
+    $student = $studentController->readStudentWithUsersInformations($_GET['student_id']);
     $remaining_fee = $student->remaining_fee;
 
+    // Traitement du formulaire de paiement
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [
             'student_id' => $_POST['student_id'],
             'amount' => $_POST['amount'],
-            'payment_date' => $_POST['payment_date'],
             'remaining_fee' => $_POST['remaining_fee'],
         ];
 
         try {
-            $payment = $paymentController->createPayment($data);
+            // Création du paiement et mise à jour du solde de l'étudiant
+            $payment_id = $paymentController->createPayment($data);
+            $payment = $paymentController->readPayment($payment_id);
             $remaining_fee_previous = $studentController->readStudent($_POST['student_id'])->remaining_fee;
             $remaining_fee_next = $remaining_fee_previous - $_POST['amount'];
             $studentController->updateStudent($_POST['student_id'], ["remaining_fee" => $remaining_fee_next]);
 
-            // Générer le reçu et envoyer par e-mail
+            // Génération du reçu et envoi par e-mail
             sendPaymentReceipt($payment, $student);
 
+            // Redirection après l'enregistrement du paiement
             header("Location: /students");
             exit;
         } catch (Exception $e) {
-            echo 'Error: ' . $e->getMessage();
+            echo 'Erreur: ' . $e->getMessage();
         }
     }
 } else {
-    echo "error";
+    echo "Erreur: Identifiant étudiant manquant.";
 }
 
+/**
+ * Fonction pour envoyer le reçu de paiement par e-mail
+ */
 function sendPaymentReceipt($payment, $student) {
     global $parentController, $classController;
-    
+
     $parent = $parentController->readParent($student->parent_id);
     $class = $classController->readClass($student->class_id);
-    
-    // Générer le QR code
+
+    // Génération du QR Code
     $qrCode = new QrCode('Signature numérique pour le paiement #' . $payment->id);
     $writer = new PngWriter();
     $result = $writer->write($qrCode);
     $qrCodeImage = $result->getDataUri();
 
-    // Préparer les données pour le template
+    // Données pour le template HTML
     $data = [
-        'schoolLogo' => 'chemin/vers/logo.png', // Remplacer par le chemin réel du logo
-        'schoolName' => 'Nom de l\'École', // Remplacer par le nom réel de l'école
+        'schoolLogo' => '/uploads/keyce_logo.png', // Chemin du logo
+        'schoolName' => 'Nom de l\'École', // Nom de l'école
         'receiptNumber' => $payment->id,
         'studentName' => $student->first_name . ' ' . $student->last_name,
         'studentId' => $student->id,
         'studentClass' => $class ? $class->name : 'Non spécifiée',
-        'paymentDate' => $payment->payment_date,
+        'paymentDate' => $payment->created_at,
         'amountPaid' => $payment->amount,
         'remainingBalance' => $student->remaining_fee,
         'qrCodeImage' => $qrCodeImage
@@ -82,24 +89,39 @@ function sendPaymentReceipt($payment, $student) {
     include 'payment_receipt_template.php';
     $htmlContent = ob_get_clean();
 
-    // Configurer PHPMailer
+    // Générer le PDF avec html2pdf
+    $pdfFilePath = __DIR__ . '/receipts/payment_receipt_' . $payment->id . '.pdf';
+    try {
+        $html2pdf = new Html2Pdf('P', 'A4', 'fr');
+        $html2pdf->writeHTML($htmlContent);
+        file_put_contents('debug_output.html', $htmlContent); // Debugging (optionnel)
+        $html2pdf->output($pdfFilePath, 'F'); // Sauvegarde le PDF
+    } catch (Exception $e) {
+        echo 'Erreur lors de la génération du PDF : ' . $e->getMessage();
+        return;
+    }
+
+    // Configuration de l'envoi par e-mail avec PHPMailer
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com'; // Remplacer par votre serveur SMTP
+        $mail->Host = 'smtp.gmail.com'; // Serveur SMTP
         $mail->SMTPAuth = true;
-        $mail->Username = 'nguetsajunior@gmail.com'; // Remplacer par votre email
-        $mail->Password = 'hcaenfisaltkngcf'; // Remplacer par votre mot de passe
+        $mail->Username = 'nguetsajunior@gmail.com'; // Email de l'expéditeur
+        $mail->Password = 'hcaenfisaltkngcf'; // Mot de passe de l'expéditeur
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
         $mail->setFrom('nguetsajunior@gmail.com', 'Keyce Institute');
-        $mail->addAddress($student->email, $student->first_name . ' ' . $student->last_name);
-        $mail->addCC($parent->email, $parent->first_name . ' ' . $parent->last_name);
+        $mail->addAddress('emmanuelscre1@gmail.com', $parent->first_name . ' ' . $parent->last_name);
+        $mail->addCC($student->email, $student->first_name . ' ' . $student->last_name);
+
+        // Ajouter le PDF en pièce jointe
+        $mail->addAttachment($pdfFilePath, 'Reçu_Paiement_' . $payment->id . '.pdf');
 
         $mail->isHTML(true);
-        $mail->Subject = 'Reçu de Paiement - ' . $payment->payment_date;
-        $mail->Body = $htmlContent;
+        $mail->Subject = 'Reçu de Paiement - ' . $payment->created_at;
+        $mail->Body = 'Veuillez trouver en pièce jointe le reçu de votre paiement.';
 
         $mail->send();
         echo 'Le reçu a été envoyé par e-mail avec succès.';
@@ -109,30 +131,25 @@ function sendPaymentReceipt($payment, $student) {
 }
 ?>
 
-<h3>Adding Payment page</h3>
+<h3>Ajouter un paiement</h3>
 <form method="POST" action="">
-    <input type="text" id="student_id" name="student_id" value="<?=$_GET['student_id'] ?>" hidden>
+    <input type="hidden" id="student_id" name="student_id" value="<?= $_GET['student_id'] ?>">
 
     <div class="form-row">
         <div class="form-group">
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" name="amount" step="1" required max="<?=$remaining_fee?>">
-        <div class="error-message"></div>
-        </div>
-        <div class="form-group">
-        <label for="payment_date">Payment Date:</label>
-        <input type="date" id="payment_date" name="payment_date" required>
+            <label for="amount">Montant:</label>
+            <input type="number" id="amount" name="amount" step="1" required max="<?= $remaining_fee ?>">
         </div>
     </div>
-    <div class="from-row">
+    
+    <div class="form-row">
         <div class="form-group">
-            <label for="remaining_fee">Remaining Fee:</label>
-            <input type="number" id="remaining_fee" name="remaining_fee" value="<?php echo isset($student) ? $student->remaining_fee : ''; ?>" required>
+            <label for="remaining_fee">Frais Restants:</label>
+            <input type="number" id="remaining_fee" name="remaining_fee" value="<?= $student->remaining_fee ?>" required>
         </div>
     </div>
-    <center>
-        <div class="form-group center">
-           <button type="submit">Add Payment</button>
-        </div>
-    </center>
+
+    <div class="form-group text-center">
+        <button type="submit">Ajouter un paiement</button>
+    </div>
 </form>
