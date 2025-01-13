@@ -1,6 +1,5 @@
 <?php
 
-// Définir les routes
 $routes = [
     "/" => "home.php",
     '/login' => 'users/login.php',
@@ -21,6 +20,8 @@ $routes = [
     '/students/update' => 'students/update.php',  
     '/students/delete' => 'students/delete.php',  
     '/student_card' => 'student/student_card.php',
+    '/search_student' => 'students/search_student.php',
+    '/chatbot' => 'student/chatbot.php',
 
     '/teachers' => 'teachers/read.php',
     '/teachers/update' => 'teachers/update.php',
@@ -57,7 +58,7 @@ $routes = [
 
 
 
-    // Ajouter d'autres routes si nécessaire
+
 ];
 
 return $routes;

@@ -12,6 +12,13 @@
       "phpmailer/phpmailer": "^6.9",
       "chillerlan/php-qrcode": "^5.0",
       "endroid/qr-code": "^6.0",
-    "tecnickcom/tcpdf": "*"
+    "tecnickcom/tcpdf": "*",
+    "guzzlehttp/guzzle": "^7.9",
+    "gemini-api-php/client": "^1.6"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
   }
 }
