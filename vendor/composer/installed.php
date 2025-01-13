@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-main',
-        'version' => 'dev-main',
-        'reference' => '4b036b72067e26bf4fcfac192de3c5f4b5889746',
+        'pretty_version' => 'dev-ChatbotEtudiant',
+        'version' => 'dev-ChatbotEtudiant',
+        'reference' => '021e2c354716f09dbb4415a1414bfedf4d8e0e7e',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
-            'reference' => '4b036b72067e26bf4fcfac192de3c5f4b5889746',
+            'pretty_version' => 'dev-ChatbotEtudiant',
+            'version' => 'dev-ChatbotEtudiant',
+            'reference' => '021e2c354716f09dbb4415a1414bfedf4d8e0e7e',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
