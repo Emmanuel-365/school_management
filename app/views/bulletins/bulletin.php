@@ -520,7 +520,7 @@ $signatureBase64 = base64_encode($signature);
             const result = JSON.parse(responseText); // Parser la réponse JSON
 
             if (sendResponse.ok && result.success) {
-                alert('Le bulletin a été envoyé avec succès.');
+                alert('Le bulletin a été envoyé avec succès');
             } else {
                 alert('Erreur lors de l\'envoi du bulletin : ' + result.message);
             }
