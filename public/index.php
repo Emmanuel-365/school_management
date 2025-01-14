@@ -15,7 +15,7 @@ $requestUri = str_replace('/public', '', $requestUri);
 
 // Vérifier si la route existe et inclure le fichier PHP correspondant
 if (array_key_exists($requestUri, $routes)) {
-    if(!str_contains($requestUri,needle: 'login') && !str_contains($requestUri,'savepdf') && !str_contains($requestUri,'send')) {
+    if(!str_contains($requestUri,needle: 'login') && !str_contains($requestUri,'savepdf') && !str_contains($requestUri,'send') && !str_contains($requestUri, "change-password")) {
         include '../app/views/haut.php';
     }
     include '../app/Views/' . $routes[$requestUri];

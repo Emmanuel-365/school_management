@@ -2,7 +2,7 @@
 
 use App\Config\Database;
 use App\Controllers\UserController;
-
+use App\Controllers\StudentController;
 
 
 
@@ -12,17 +12,23 @@ $database = new Database();
 $db = $database->getConnection();
 
 if(isset($_SESSION['user_id']))
-   chooseDashboard();
+   chooseDashboard($userController, $db);
 
-function chooseDashboard(){
+function chooseDashboard($userController, $db){
     switch ($_SESSION['user_role']) {
         case 'admin':
             header('Location: /admin');
             break;
 
         case 'student':
-            header('Location: /student');
-            break;
+            $studentController = new StudentController($db);   
+            if($studentController->checkIsValidPassword($_SESSION['user_id'])){
+                header('Location: /student');
+                break;
+            }else{
+                header('Location: /change-password');
+                break;
+            }
 
         case 'teacher':
             header('Location: /teacher');
@@ -43,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     if ($userController->login($username, $password)) {
-        chooseDashboard();
+        chooseDashboard($userController, $db);
     } else {
         echo 'Invalid username or password.';
     }

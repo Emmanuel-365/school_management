@@ -19,6 +19,9 @@ class StudentController {
 
     // Méthode pour créer un étudiant
     public function createStudent($data) {
+        if($data['parent_email'] === $data['email']){
+            throw new \Exception('Le mail du parent et de l\'etudiant doivent etre differents');
+        }
         // Créer d'abord le parent
         $parentData = [
             'first_name' => $data['parent_first_name'],
@@ -129,6 +132,10 @@ class StudentController {
     // Méthode pour compter les étudiants par classe
     public function countStudentsByClass($classId) {
         return $this->studentModel->countStudentsByClass($classId);
+    }
+
+    public function checkIsValidPassword($id){
+        return $this->studentModel->isValidPassword($id);
     }
 }
 ?>
