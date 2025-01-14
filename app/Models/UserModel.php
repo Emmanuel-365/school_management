@@ -40,4 +40,13 @@ class UserModel extends Model {
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_class($this), [$this->db]);
         return $stmt->fetch();
     }
+
+    protected function getPassword($id){
+        $sql = "SELECT password FROM users WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
 }

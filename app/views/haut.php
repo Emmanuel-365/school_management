@@ -44,7 +44,7 @@ $user = $userController->readUser($_SESSION['user_id']);
                 <div class="language-selector">
                     <!-- Conteneur du drapeau sélectionné -->
                     <div class="flag-container">
-                        <img id="selected-flag" src="/images/flags/en.png" alt="English">
+                        <!-- <img id="selected-flag" src="/images/flags/en.png" alt="English"> -->
                     </div>
 
                     <!-- Sélecteur de langue -->
@@ -57,7 +57,7 @@ $user = $userController->readUser($_SESSION['user_id']);
                     <img class="profile-picture"
                         src="<?= htmlspecialchars($user->profile_picture ?? '/images/profiles/default_profile.jpg'); ?>"
                         alt="Photo de profil">
-                    <span><?= $user->username ?></span>
+                    <span><?= $user->first_name . ' ' . $user->last_name ?></span>
                     <div class="user-dropdown">
                         <a href="/change_password">Change profile information</a>
                     </div>

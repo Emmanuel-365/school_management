@@ -64,5 +64,17 @@ class StudentModel extends UserModel {
         $stmt->setFetchMode(PDO::FETCH_CLASS, get_class($this), [$this->db]);
         return $stmt->fetchAll();
     }
+
+    public function isValidPassword($id){
+        $student = $this->readWithUsersInformations($id);
+        $password = $this->getPassword($id);
+        if(password_verify($student->matricule, $password))
+            return false;
+        else
+            return true;
+    }
 }
 ?>
+
+<?php 
+

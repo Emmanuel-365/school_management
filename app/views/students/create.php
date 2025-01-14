@@ -17,6 +17,7 @@ $classController = new ClassController($db);
 // Récupérer toutes les classes pour le formulaire
 $classes = $classController->readAllClasses();
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Définir le dossier de destination pour les photos de profil
     $uploadDir = __DIR__ . '/../../../public/images/profiles/';
@@ -90,11 +91,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" enctype="multipart/form-data">
         <div class="form-row">
             <div class="form-group">
-            <label for="first_name" data-translate="first_name"></label>
+            <label for="first_name" data-translate="first_name">Noms</label>
             <input type="text" id="first_name" name="first_name" required>
             </div>
             <div class="form-group">
-            <label for="last_name" data-translate="last_name"></label>
+            <label for="last_name" data-translate="last_name">Prenoms</label>
             <input type="text" id="last_name" name="last_name" required>
             </div>
         </div>
@@ -104,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
-            <label for="phone" data-translate="phone"></label>
+            <label for="phone" data-translate="phone">Phone:</label>
             <input type="text" id="phone" name="phone" required>
             <div class="error-message"></div>
             </div>
@@ -112,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-row">
             <div class="form-group">
-            <label for="date_of_birth" data-translate="date_of_birth"></label>
+            <label for="date_of_birth" data-translate="date_of_birth">Date of Birth</label>
             <input type="date" id="date_of_birth" name="date_of_birth" required>
             <div class="error-message"></div>
             </div>
@@ -122,15 +123,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>  
         </div>
         <div class="form-row">
-            <div class="form-group dynamic-dropdown">
-            <label for="class_id">Class:</label>
-            <input type="text" id="class_id" name="class_id" placeholder="Ex: Bachelor 1 - Classe 1">
-                <ul class="options">
+            <div class="form-group">
+                <label for="class_id">Class:</label>
+                <select id="class_id" name="class_id" required>
+                    <option value="" disabled selected>Select a class</option>
                     <?php foreach ($classes as $class): ?>
-                        <li value="<?php echo $class->id; ?>"><?php echo $class->name; ?></li>
+                        <option value="<?php echo $class->id; ?>"><?php echo $class->name; ?></option>
                     <?php endforeach; ?>
-                </ul>
+                </select>
             </div>
+
             <div class="form-group">
             <label for="parent_first_name">Parent First Name:</label>
             <input type="text" id="parent_first_name" name="parent_first_name" required>
