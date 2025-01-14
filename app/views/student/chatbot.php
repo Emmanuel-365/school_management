@@ -35,7 +35,6 @@ try {
         throw new Exception('Message manquant dans la requête');
     }
 
-    
     $database = new Database();
     $db = $database->getConnection();
 
@@ -56,8 +55,8 @@ try {
     }
 
     // Initialiser le chatbot avec la clé API
-    $GeminiApiKey = 'AIzaSyA0YG2d4VEYfIADf0ULFtzKluuUL08bDXA'; // Ça c'est ma Clé API Gemini je crois lui  avoir donnée toutes les permissions necessaire mais je ne sais pas si le pb viens d'elle (test  avec postman peut etre necessaire?)
-    
+    $GeminiApiKey = 'AIzaSyB-y75gkmiaLjnmN0xSDypMWuCzlTEQsT4'; // Votre Clé API Gemini
+
     if (empty($GeminiApiKey)) {
         throw new Exception('Clé API Gemini non configurée');
     }
@@ -71,7 +70,7 @@ try {
     }
 
     $niveau = $classController->readClass($student->class_id)->level;
-    
+
     // Récupérer et calculer les notes
     $grades = $gradeController->readAllGradesByStudent($student_id);
     if (empty($grades)) {
@@ -118,7 +117,7 @@ try {
 
     // Obtenir la réponse du chatbot
     try {
-        $response = $chatbot->getResponse($data['message'], $studentData);
+        $response = $chatbot->getResponse($data['message'], $studentData, true); // Ajout d'un paramètre pour désactiver SSL
         echo json_encode(['response' => $response]);
     } catch (Exception $e) {
         error_log("Erreur Chatbot: " . $e->getMessage());
