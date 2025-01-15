@@ -17,14 +17,7 @@ if($database->isStudent()){
     $payments = $paymentController->readAllPayments();
 ?>
 
-<?php
-// Assuming $payments is your array of all payments
-$itemsPerPage = 5;
-$totalPages = ceil(count($payments) / $itemsPerPage);
-$currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page']))) : 1;
-$offset = ($currentPage - 1) * $itemsPerPage;
-$currentPagePayments = array_slice($payments, $offset, $itemsPerPage);
-?>
+
             <div class="search-container">
                 <input type="text" id="search" placeholder="Search for a payment..." />
             </div>
@@ -36,7 +29,7 @@ $currentPagePayments = array_slice($payments, $offset, $itemsPerPage);
             <th>Payment Date</th>
             <!-- <th>Actions</th> -->
         </tr>
-        <?php foreach ($currentPagePayments as $payment): ?>
+        <?php foreach ($payments as $payment): ?>
             <tr>
                 <td><?php echo $payment->id; ?></td>
                 <td><?php echo $payment->student_id; ?></td>
@@ -45,17 +38,91 @@ $currentPagePayments = array_slice($payments, $offset, $itemsPerPage);
             </tr>
         <?php endforeach; ?>
     </table>
-    <?php if (count($payments) > 5): ?>
     <div class="navigation">
-        <?php if ($currentPage > 1): ?>
-            <a href="?page=<?php echo $currentPage - 1; ?>" id="prevPage" class="nav-button prev-button">
-                <i class="fas fa-chevron-left"></i> Précédent
-            </a>
-        <?php endif; ?>
-        <?php if ($currentPage < $totalPages): ?>
-            <a href="?page=<?php echo $currentPage + 1; ?>" id="nextPage" class="nav-button next-button">
-                Suivant <i class="fas fa-chevron-right"></i>
-            </a>
-        <?php endif; ?>
-    </div>
-<?php endif; ?>
+    <button id="prevPage" class="nav-button" data-translate="previous" disabled></button>
+    <button id="nextPage" class="nav-button" data-translate="next"></button>
+</div>
+
+<script>
+    const allPayments = <?= json_encode($payments) ?>; // Les paiements récupérés depuis PHP
+    const itemsPerPage = 5; // Nombre d'éléments par page
+    let currentPage = 1;
+
+    // Fonction pour afficher les paiements dans le tableau
+    function renderTable(payments) {
+        const tbody = document.querySelector('#paymentsTable tbody');
+        tbody.innerHTML = ''; // Réinitialiser le tableau
+
+        payments.forEach((payment) => {
+            const row = `
+                <tr>
+                    <td>${payment.id}</td>
+                    <td>${payment.student_id}</td>
+                    <td>${payment.amount}</td>
+                    <td>${payment.created_at}</td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Fonction pour gérer la pagination
+    function paginatePayments(page, payments = allPayments) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paymentsForPage = payments.slice(start, end);
+
+        renderTable(paymentsForPage);
+
+        // Gérer les boutons de navigation
+        document.getElementById('prevPage').disabled = page === 1;
+        document.getElementById('nextPage').disabled = end >= payments.length;
+    }
+
+    // Fonction pour rechercher des paiements
+    function filterPayments(query) {
+        const filteredPayments = allPayments.filter((payment) => {
+            const studentId = (payment.student_id || '').toString().toLowerCase();
+            const amount = (payment.amount || '').toString().toLowerCase();
+            const paymentDate = (payment.created_at || '').toLowerCase();
+
+            return (
+                studentId.includes(query) ||
+                amount.includes(query) ||
+                paymentDate.includes(query)
+            );
+        });
+
+        currentPage = 1; // Réinitialiser à la première page
+        paginatePayments(currentPage, filteredPayments);
+    }
+
+    // Écouteurs pour les boutons de pagination
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            paginatePayments(currentPage);
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPages = Math.ceil(allPayments.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            paginatePayments(currentPage);
+        }
+    });
+
+    // Écouteur pour la recherche
+    document.getElementById('search').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        if (query) {
+            filterPayments(query);
+        } else {
+            paginatePayments(currentPage);
+        }
+    });
+
+    // Initialisation de la pagination
+    paginatePayments(currentPage);
+</script>

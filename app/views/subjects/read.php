@@ -19,14 +19,7 @@ $classController = new ClassController($db);
 $subjects = $subjectController->readAllSubjects();
 ?>
 
-<?php
-// Assuming $subjects is your array of all subjects
-$itemsPerPage = 5;
-$totalPages = ceil(count($subjects) / $itemsPerPage);
-$currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page']))) : 1;
-$offset = ($currentPage - 1) * $itemsPerPage;
-$currentPageSubjects = array_slice($subjects, $offset, $itemsPerPage);
-?>
+
 <div class="search-container">
     <input type="text" id="search" placeholder="Search for a subject..." />
     <?php if ($database->isAdmin()) : ?>
@@ -45,7 +38,7 @@ $currentPageSubjects = array_slice($subjects, $offset, $itemsPerPage);
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($currentPageSubjects as $subject): ?>
+        <?php foreach ($subjects as $subject): ?>
             <?php if($subject->teacher_id == $_SESSION['user_id'] || $_SESSION['user_role'] === 'admin') : ?>
             <tr>
                 <td><center><?php echo $subject->id; ?></center></td>
@@ -70,44 +63,120 @@ $currentPageSubjects = array_slice($subjects, $offset, $itemsPerPage);
         <?php endforeach; ?>
     </tbody>
 </table>
-<?php if (count($subjects) > 5): ?>
-    <div class="navigation">
-        <?php if ($currentPage > 1): ?>
-            <a href="?page=<?php echo $currentPage - 1; ?>" id="prevPage" class="nav-button prev-button">
-                <i class="fas fa-chevron-left"></i> Précédent
-            </a>
-        <?php endif; ?>
-        <?php if ($currentPage < $totalPages): ?>
-            <a href="?page=<?php echo $currentPage + 1; ?>" id="nextPage" class="nav-button next-button">
-                Suivant <i class="fas fa-chevron-right"></i>
-            </a>
-        <?php endif; ?>
+<div class="navigation">
+        <button id="prevPage" class="nav-button" data-translate="previous" disabled></button>
+        <button id="nextPage" class="nav-button" data-translate="next"></button>
     </div>
-<?php endif; ?>
 
-<script>
-    const searchInput = document.getElementById('search');
-    const tableRows = document.querySelectorAll('#subjectTable tbody tr');
+    <script>
+    const allSubjects = <?= json_encode($subjects) ?>; 
+    const isAdmin = <?= json_encode($database->isAdmin()) ?>; 
+    const isTeacher = <?= json_encode($database->isTeacher()) ?>;
+    let currentPage = 1;
+    const itemsPerPage = 5;
 
-    let searchTimeout;
+    // Fonction pour afficher les sujets dans le tableau
+    function renderSubjects(subjects) {
+        const tbody = document.querySelector('#subjectTable tbody');
+        tbody.innerHTML = ''; // Vider le tableau existant
 
-    searchInput.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
+        subjects.forEach(subject => {
+            let row = `
+                <tr>
+                    <td><center>${subject.id}</center></td>
+                    <td><center>${subject.name}</center></td>
+                    <td><center>${subject.teacher_id || 'Aucun enseignant'}</center></td>
+                    <td><center>${subject.level}</center></td>
+                    <td><center>`;
+            if (isAdmin) {
+                row += `
+                    <a href="/subjects/update?id=${subject.id}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>
+                    <a href="#" class="action-button delete" onclick="confirmDelete(${subject.id})"><i class="fa-solid fa-trash"></i></a>`;
+            } else if (isTeacher) {
+                row += `
+                    <a href="/students?subject_id=${subject.id}" class="action-button update"><i class="fa-solid fa-eye"></i></a>`;
+            }
+            row += `</center></td></tr>`;
+            tbody.innerHTML += row;
+        });
+    }
 
-        searchTimeout = setTimeout(() => {
-            const searchTerm = searchInput.value.toLowerCase();
+    // Fonction pour gérer la pagination
+    function paginateSubjects(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const subjectsForPage = allSubjects.slice(start, end);
 
-            tableRows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+        renderSubjects(subjectsForPage);
 
-                if (rowText.includes(searchTerm)) {
-                    row.style.display = ''; // Affiche la ligne
-                } else {
-                    row.style.display = 'none'; // Cache la ligne
-                }
-            });
-        }, 300); // Intervalle de 300 ms
+        // Gérer les boutons de navigation
+        document.getElementById('prevPage').disabled = page === 1;
+        document.getElementById('nextPage').disabled = end >= allSubjects.length;
+    }
+
+    // Fonction pour rechercher des sujets
+    function filterSubjects(query) {
+        const filteredSubjects = allSubjects.filter((subject) => {
+            const name = `${subject.name}`.toLowerCase();
+            const level = (subject.level || '').toLowerCase();
+
+            return (
+                name.includes(query) ||
+                level.includes(query)
+            );
+        });
+
+        currentPage = 1; // Réinitialiser à la première page
+        renderSubjects(filteredSubjects.slice(0, itemsPerPage)); // Afficher les résultats de recherche
+        document.getElementById('prevPage').disabled = true;
+        document.getElementById('nextPage').disabled = filteredSubjects.length <= itemsPerPage;
+    }
+
+    // Fonction pour confirmer la suppression
+    function confirmDelete(subjectId) {
+        Swal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: "Cette action est irréversible.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Oui, supprimer !',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Rediriger vers l'URL de suppression
+                window.location.href = `/subjects/delete?id=${subjectId}`;
+            }
+        });
+    }
+
+    // Écouteurs pour la pagination
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            paginateSubjects(currentPage);
+        }
     });
-</script>
 
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPages = Math.ceil(allSubjects.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            paginateSubjects(currentPage);
+        }
+    });
+
+    // Écouteur pour la recherche
+    document.getElementById('search').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        if (query) {
+            filterSubjects(query);
+        } else {
+            paginateSubjects(currentPage); 
+        }
+    });
+
+    // Initialiser avec la première page
+    paginateSubjects(currentPage);
+</script>

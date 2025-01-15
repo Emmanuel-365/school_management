@@ -10,8 +10,8 @@ if(session_status() == PHP_SESSION_NONE) session_start();
 class Database {
     private $dbHost = 'localhost';
     private $dbName = 'school_management';
-    private $dbUser = 'Emmanuel';
-    private $dbPass = '';
+    private $dbUser = 'root';
+    private $dbPass = 'Nox_EGYRGF_123';
     private $pdo;
 
     public function __construct() {

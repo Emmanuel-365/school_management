@@ -1,8 +1,20 @@
+function setActiveStyleSheet(title) {
+    var links = document.getElementsByTagName("link");
+    for (var i = 0; i < links.length; i++) {
+        var link = links[i];
+        if (link.getAttribute("rel").indexOf("style") != -1 && link.getAttribute("title")) {
+            link.disabled = true;
+            if (link.getAttribute("title") === title) link.disabled = false;
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const content = document.querySelector('.content');
     const sidebarToggle = document.getElementById('sidebarToggle');
     const navLinks = document.querySelectorAll('.sidebar nav a');
+    const darkModeToggle = document.getElementById('darkModeToggle');
 
     // Fonction pour basculer la visibilité de la sidebar
     function toggleSidebar() {
@@ -37,18 +49,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Dark mode toggle functionality
+    function toggleDarkMode() {
+        const isDarkMode = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode);
+        setActiveStyleSheet(isDarkMode ? 'dark' : 'light');
+        updateChartColors();
+    }
+
+    // Check for saved dark mode preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        darkModeToggle.checked = true;
+        setActiveStyleSheet('dark');
+    } else {
+        setActiveStyleSheet('light');
+    }
+
+    // Event listener for dark mode toggle
+    darkModeToggle.addEventListener('change', toggleDarkMode);
+
+    // Function to update chart colors based on the current mode
+    function updateChartColors() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const textColor = isDarkMode ? '#f0f0f0' : '#333';
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+        // Update Enrollment Chart
+        if (window.enrollmentChart) {
+            window.enrollmentChart.options.scales.x.ticks.color = textColor;
+            window.enrollmentChart.options.scales.y.ticks.color = textColor;
+            window.enrollmentChart.options.scales.x.grid.color = gridColor;
+            window.enrollmentChart.options.scales.y.grid.color = gridColor;
+            window.enrollmentChart.update();
+        }
+
+        // Update Performance Chart
+        if (window.performanceChart) {
+            window.performanceChart.options.scales.x.ticks.color = textColor;
+            window.performanceChart.options.scales.y.ticks.color = textColor;
+            window.performanceChart.options.scales.x.grid.color = gridColor;
+            window.performanceChart.options.scales.y.grid.color = gridColor;
+            window.performanceChart.update();
+        }
+    }
 
     // Enrollment Chart
     const enrollmentCtx = document.getElementById('enrollmentChart').getContext('2d');
-    new Chart(enrollmentCtx, {
+    window.enrollmentChart = new Chart(enrollmentCtx, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aou', 'Sep', 'Oct', 'Nov', 'Déc'],
             datasets: [{
                 label: 'Inscriptions des Étudiants',
-                data: [1000, 1050, 1100, 1075, 1150, 1200],
-                borderColor: '#1e40af',
-                backgroundColor: 'rgba(30, 64, 175, 0.1)',
+                data: [1000, 1050, 1100, 1075, 1150, 1200, 1180, 1220, 1250, 1300, 1350, 1400],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 tension: 0.3
             }]
         },
@@ -68,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Performance Chart
     const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-    new Chart(performanceCtx, {
+    window.performanceChart = new Chart(performanceCtx, {
         type: 'bar',
         data: {
             labels: ['Maths', 'Sciences', 'Français', 'Histoire', 'Art'],
@@ -98,6 +154,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Initial update of chart colors
+    updateChartColors();
+
     // Add hover effect to stat cards
     const statCards = document.querySelectorAll('.stat-card');
     statCards.forEach(card => {
@@ -111,37 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-
-
-
-    
+   
+    updateChartColors();
 });
-// code de recherche dynamique
-const searchInput = document.getElementById('search');
-        const table = document.getElementById('studentsTable');
-        const rows = Array.from(table.getElementsByTagName('tbody')[0].getElementsByTagName('tr'));
 
-        function debounce(callback, delay) {
-            let timeout;
-            return (...args) => {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => callback(...args), delay);
-            };
-        }
-
-        function filterStudents(keyword) {
-            keyword = keyword.toLowerCase();
-            rows.forEach(row => {
-                const cells = Array.from(row.getElementsByTagName('td'));
-                const matches = cells.some(cell => 
-                    cell.textContent.toLowerCase().includes(keyword)
-                );
-                row.style.display = matches ? '' : 'none';
-            });
-        }
-
-        searchInput.addEventListener('input', debounce((e) => {
-            const keyword = e.target.value;
-            filterStudents(keyword);
-        }, 300));
-// fin
