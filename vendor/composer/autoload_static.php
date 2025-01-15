@@ -21,6 +21,10 @@ class ComposerStaticInit8ad41ef49883537591969912f692467b
     );
 
     public static $prefixLengthsPsr4 = array (
+        's' => 
+        array (
+            'setasign\\Fpdi\\' => 14,
+        ),
         'c' => 
         array (
             'chillerlan\\Settings\\' => 20,
@@ -38,6 +42,7 @@ class ComposerStaticInit8ad41ef49883537591969912f692467b
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\Routing\\' => 26,
             'Symfony\\Component\\HttpFoundation\\' => 33,
+            'Spipu\\Html2Pdf\\' => 15,
         ),
         'P' => 
         array (
@@ -80,6 +85,10 @@ class ComposerStaticInit8ad41ef49883537591969912f692467b
     );
 
     public static $prefixDirsPsr4 = array (
+        'setasign\\Fpdi\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/setasign/fpdi/src',
+        ),
         'chillerlan\\Settings\\' => 
         array (
             0 => __DIR__ . '/..' . '/chillerlan/php-settings-container/src',
@@ -115,6 +124,10 @@ class ComposerStaticInit8ad41ef49883537591969912f692467b
         'Symfony\\Component\\HttpFoundation\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/http-foundation',
+        ),
+        'Spipu\\Html2Pdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/spipu/html2pdf/src',
         ),
         'Psr\\Http\\Message\\' => 
         array (
