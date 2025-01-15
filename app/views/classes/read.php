@@ -13,14 +13,7 @@ $classController = new ClassController($db);
 $classes = $classController->readAllClasses();
 ?>
 
-<?php
-// Assuming $classes is your array of all classes
-$itemsPerPage = 5;
-$totalPages = ceil(count($classes) / $itemsPerPage);
-$currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page']))) : 1;
-$offset = ($currentPage - 1) * $itemsPerPage;
-$currentPageClasses = array_slice($classes, $offset, $itemsPerPage);
-?>
+
 <div class="search-container">
     <input type="text" id="search" placeholder="Search for a class..." />
     <a href="/classes/create" class="add-button">Add Class</a>
@@ -37,7 +30,7 @@ $currentPageClasses = array_slice($classes, $offset, $itemsPerPage);
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($currentPageClasses as $class): ?>
+        <?php foreach ($classes as $class): ?>
             <tr>
                 <td><?php echo htmlspecialchars($class->id); ?></td>
                 <td><?php echo htmlspecialchars($class->name); ?></td>
@@ -51,44 +44,113 @@ $currentPageClasses = array_slice($classes, $offset, $itemsPerPage);
         <?php endforeach; ?>
     </tbody>
 </table>
-<?php if (count($classes) > 5): ?>
-    <div class="navigation">
-        <?php if ($currentPage > 1): ?>
-            <a href="?page=<?php echo $currentPage - 1; ?>" id="prevPage" class="nav-button prev-button">
-                <i class="fas fa-chevron-left"></i> Précédent
-            </a>
-        <?php endif; ?>
-        <?php if ($currentPage < $totalPages): ?>
-            <a href="?page=<?php echo $currentPage + 1; ?>" id="nextPage" class="nav-button next-button">
-                Suivant <i class="fas fa-chevron-right"></i>
-            </a>
-        <?php endif; ?>
+<div class="navigation">
+        <button id="prevPage" class="nav-button" data-translate="previous" disabled></button>
+        <button id="nextPage" class="nav-button" data-translate="next"></button>
     </div>
-<?php endif; ?>
 
-<script>
-    const searchInput = document.getElementById('search');
-    const tableRows = document.querySelectorAll('#classTable tbody tr');
+    <script>
+    const allClasses = <?= json_encode($classes) ?>; // Les données des classes
+    const isAdmin = <?= json_encode($database->isAdmin()) ?>; // Vérifie si l'utilisateur est admin
+    const itemsPerPage = 5;
+    let currentPage = 1;
 
-    let searchTimeout;
+    // Fonction pour afficher les classes dans le tableau
+    function renderTable(classes) {
+        const tbody = document.querySelector('#classTable tbody');
+        tbody.innerHTML = ''; // Réinitialiser le tableau
 
-    searchInput.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
+        classes.forEach((classe) => {
+            const row = `
+                <tr>
+                    <td>${classe.id || ''}</td>
+                    <td>${classe.name || ''}</td>
+                    <td>${classe.level || ''}</td>
+                    <td>${classe.total_fee || ''}</td>
+                    <td>
+                        ${isAdmin ? `
+                            <a href="/classes/update?id=${classe.id}" class="action-button update">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="#" class="action-button delete" onclick="confirmDelete(${classe.id})">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        ` : ''}
+                    </td>
+                </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
 
-        searchTimeout = setTimeout(() => {
-            const searchTerm = searchInput.value.toLowerCase();
+    // Fonction pour gérer la pagination
+    function paginateClasses(page, classes = allClasses) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const classesForPage = classes.slice(start, end);
 
-            tableRows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+        renderTable(classesForPage);
 
-                if (rowText.includes(searchTerm)) {
-                    row.style.display = ''; // Affiche la ligne
-                } else {
-                    row.style.display = 'none'; // Cache la ligne
-                }
-            });
-        }, 300); // Intervalle de 300 ms
+        // Gérer les boutons de navigation
+        document.getElementById('prevPage').disabled = page === 1;
+        document.getElementById('nextPage').disabled = end >= classes.length;
+    }
+
+    // Fonction pour rechercher des classes
+    function filterClasses(query) {
+        const filteredClasses = allClasses.filter((classe) => {
+            const name = (classe.name || '').toLowerCase();
+            const level = (classe.level || '').toLowerCase();
+            return name.includes(query) || level.includes(query);
+        });
+
+        currentPage = 1; // Réinitialiser à la première page
+        paginateClasses(currentPage, filteredClasses);
+    }
+
+    // Écouteurs pour les boutons de pagination
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            paginateClasses(currentPage);
+        }
     });
-</script>
 
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPages = Math.ceil(allClasses.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            paginateClasses(currentPage);
+        }
+    });
+
+    // Écouteur pour la recherche
+    document.getElementById('search').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        if (query) {
+            filterClasses(query);
+        } else {
+            paginateClasses(currentPage); // Revenir à la pagination normale
+        }
+    });
+
+    // Fonction de confirmation de suppression
+    function confirmDelete(classId) {
+        Swal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: "Cette action est irréversible.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Oui, supprimer !',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/classes/delete?id=${classId}`;
+            }
+        });
+    }
+
+    // Initialisation de la pagination
+    paginateClasses(currentPage);
+</script>

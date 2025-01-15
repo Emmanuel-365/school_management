@@ -19,8 +19,8 @@ $user = $userController->readUser($_SESSION['user_id']);
     <title>Keyce Management</title>
     <link rel="icon" href="../images/Keyce_logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/student_styles.css">
+    <link rel="stylesheet" href="/css/styles.css" title="light">
+    <link rel="stylesheet" href="/css/dark_style.css" title="dark">
     <link rel="stylesheet" href="/css/chatbot.css">
     <!-- pour le PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
@@ -44,7 +44,7 @@ $user = $userController->readUser($_SESSION['user_id']);
                 <div class="language-selector">
                     <!-- Conteneur du drapeau sélectionné -->
                     <div class="flag-container">
-                        <!-- <img id="selected-flag" src="/images/flags/en.png" alt="English"> -->
+                        <img id="selected-flag" src="/images/flags/en.png" alt="English">
                     </div>
 
                     <!-- Sélecteur de langue -->

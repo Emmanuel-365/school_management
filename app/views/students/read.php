@@ -28,14 +28,7 @@ if(isset($_GET['subject_id'])) {
     $students = $studentController->readAllStudentsWithUsersInformations();
 ?>
 
-<?php
-// Assuming $students is your array of all students
-$itemsPerPage = 5;
-$totalPages = ceil(count($students) / $itemsPerPage);
-$currentPage = isset($_GET['page']) ? max(1, min($totalPages, intval($_GET['page']))) : 1;
-$offset = ($currentPage - 1) * $itemsPerPage;
-$currentPageStudents = array_slice($students, $offset, $itemsPerPage);
-?>
+
             <div class="search-container">
                 <input type="text" id="search" data-translate-placeholder="search_placeholder" />
                 <?php if ($database->isAdmin()) : ?>
@@ -63,7 +56,7 @@ $currentPageStudents = array_slice($students, $offset, $itemsPerPage);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($currentPageStudents as $student): 
+                    <?php foreach ($students as $student): 
                         $totalFee = $student->class_id != null ? $classController->readClass($student->class_id)->total_fee : 0;
                         $remainingFee = $student->remaining_fee;
                         $status = $totalFee == 0 ? 'No Fee Data' : ($remainingFee == 0 ? 'Paid' : ($remainingFee < $totalFee ? 'Partial' : 'Unpaid'));
@@ -159,17 +152,141 @@ $currentPageStudents = array_slice($students, $offset, $itemsPerPage);
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <?php if (count($students) > 5): ?>
-    <div class="navigation">
-        <?php if ($currentPage > 1): ?>
-            <a href="?page=<?php echo $currentPage - 1; ?>" id="prevPage" class="nav-button prev-button" data-translate="previous">
-                <i class="fas fa-chevron-left"></i>
-            </a>
-        <?php endif; ?>
-        <?php if ($currentPage < $totalPages): ?>
-            <a href="?page=<?php echo $currentPage + 1; ?>" id="nextPage" class="nav-button next-button" data-translate="next">
-                 <i class="fas fa-chevron-right"></i>
-            </a>
-        <?php endif; ?>
+            <div class="navigation">
+        <button id="prevPage" class="nav-button" data-translate="previous" disabled></button>
+        <button id="nextPage" class="nav-button" data-translate="next"></button>
     </div>
-<?php endif; ?>
+<script>
+    const allStudents = <?= json_encode($students) ?>;
+    const isAdmin = <?= json_encode($database->isAdmin()) ?>;
+    const isTeacher = <?= json_encode($database->isTeacher()) ?>;
+    let currentPage = 1;
+    const itemsPerPage = 5;
+
+    // Fonction pour afficher les étudiants dans le tableau
+    function renderTable(students) {
+        const tbody = document.querySelector('#studentsTable tbody');
+        tbody.innerHTML = ''; // Vider le tableau
+
+        students.forEach((student) => {
+            const totalFee = student.total_fee || 0;
+            const remainingFee = student.remaining_fee || 0;
+                            const status = <?= json_encode($status) ?>;
+            const profilePicture = student.profile_picture || '/images/profiles/default_profile.jpg';
+
+            let row = `
+                <tr>
+                    <td><img src="${profilePicture}" alt="Photo" style="width: 50px; height: 50px; border-radius: 50%;"></td>
+                    <td>${student.first_name} ${student.last_name}</td>
+                    <td>${student.class_id ? student.class_name : 'N/A'}</td>
+            `;
+
+            if (isAdmin) {
+                row += `
+                    <td>${student.parent_id || 'N/A'}</td>
+                    <td>${remainingFee}</td>
+                    <td><?=$status?></td>
+                    <td>
+                        <a href="/payments/create?student_id=${student.id}" class="action-button add-payment"><i class="fa-solid fa-credit-card"></i></a>
+                        <a href="/students/update?id=${student.id}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="#" class="action-button delete" onclick="confirmDelete(${student.id})">
+                        <i class="fa-solid fa-trash"></i>
+                    </td>
+                `;
+            }
+
+            if (isTeacher) {
+                row += `
+                    <td>${student.cc === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=cc" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.cc} <a href="/grades/update?id=${student.ccId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
+                    <td>${student.tp === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=tp" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.tp} <a href="/grades/update?id=${student.tpId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
+                    <td>${student.rattrapage === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=rattrapage" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.rattrapage} <a href="/grades/update?id=${student.rattrapageId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
+                    <td>${student.exam === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=exam" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.exam} <a href="/grades/update?id=${student.examId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
+                `;
+            }
+
+            row += `</tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Fonction pour gérer la pagination
+    function paginateStudents(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const studentsForPage = allStudents.slice(start, end);
+
+        renderTable(studentsForPage);
+
+        document.getElementById('prevPage').disabled = page === 1;
+        document.getElementById('nextPage').disabled = end >= allStudents.length;
+    }
+
+    // Fonction pour rechercher des étudiants
+    function filterStudents(query) {
+        const filteredStudents = allStudents.filter((student) => {
+            const fullName = `${student.first_name} ${student.last_name}`.toLowerCase();
+            const className = (student.class_name || '').toLowerCase();
+            const parentName = (student.parent_name || '').toLowerCase();
+
+            return (
+                fullName.includes(query) ||
+                className.includes(query) ||
+                parentName.includes(query)
+            );
+        });
+
+        currentPage = 1;
+        renderTable(filteredStudents.slice(0, itemsPerPage)); // Afficher les résultats de recherche
+        document.getElementById('prevPage').disabled = true;
+        document.getElementById('nextPage').disabled = filteredStudents.length <= itemsPerPage;
+    }
+
+    // Écouteurs pour les boutons de pagination
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            paginateStudents(currentPage);
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPages = Math.ceil(allStudents.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            paginateStudents(currentPage);
+        }
+    });
+
+    // Écouteur pour la recherche
+    document.getElementById('search').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        if (query) {
+            filterStudents(query);
+        } else {
+            paginateStudents(currentPage); // Réafficher la pagination si la recherche est vide
+        }
+    });
+
+    paginateStudents(currentPage);
+</script>
+<script>
+function confirmDelete(studentId) {
+    Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: "Cette action est irréversible.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer !',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirige l'utilisateur vers le lien de suppression si confirmé
+            window.location.href = `/students/delete?id=${studentId}`;
+        }
+    });
+}
+</script>
+
+
