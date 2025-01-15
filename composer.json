@@ -12,9 +12,11 @@
       "phpmailer/phpmailer": "^6.9",
       "chillerlan/php-qrcode": "^5.0",
       "endroid/qr-code": "^6.0",
-    "tecnickcom/tcpdf": "*",
+    "tecnickcom/tcpdf": "^6.8",
     "guzzlehttp/guzzle": "^7.9",
-    "gemini-api-php/client": "^1.6"
+    "gemini-api-php/client": "^1.6",
+    "setasign/fpdi": "^2.6",
+    "spipu/html2pdf": "^5.3"
   },
   "config": {
     "allow-plugins": {

@@ -86,7 +86,6 @@ class ChatbotGemini {
             } else {
                 // Si c'est du JSON valide, on extrait le texte normalement
                 $responseText = $body['candidates'][0]['content']['parts'][0]['text'] ?? null;
-                file_put_contents('test.txt', $responseText);
                 if ($responseText === null) {
                     throw new \Exception("Format de réponse inattendu ou contenu manquant dans la réponse JSON");
                 }
@@ -144,6 +143,6 @@ class ChatbotGemini {
 
     public function resetConversation() {
         $this->conversation = [];
-        $this->addToConversation('user', "Tu es un assistant pédagogique spécialisé dans l'orientation et le conseil aux étudiants. Tu dois fournir des conseils personnalisés basés sur les performances académiques des étudiants.");
+        $this->addToConversation('user', "Tu es un assistant pédagogique spécialisé dans l'orientation et le conseil aux étudiants. Tu dois fournir des conseils personnalisés basés sur les performances académiques des étudiants. Tu es un chatbot de l'universite francaise Keyce informatique et intelligence artificielle. et tu t'appelle Le Keycois");
     }
 }

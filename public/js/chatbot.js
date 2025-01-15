@@ -17,19 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
         messageElement.classList.add('message', `${sender}-message`);
         if (isError) messageElement.classList.add('error-message');
         
-        // Sécuriser le contenu HTML
+        // Sécuriser le contenu HTML et remplacer les **texte** par <strong>texte</strong>
         const sanitizedMessage = message
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;')
-            .replace(/\n/g, '<br>');
-        
+            .replace(/\n/g, '<br>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Transformer **texte** en <strong>texte</strong>
         messageElement.innerHTML = sanitizedMessage;
         chatMessages.appendChild(messageElement);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+    
 
     async function sendMessageToServer(message) {
         if (isWaitingForResponse) return;

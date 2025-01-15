@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-ChatbotEtudiant',
-        'version' => 'dev-ChatbotEtudiant',
-        'reference' => '021e2c354716f09dbb4415a1414bfedf4d8e0e7e',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '850c389437636b559d5871394a2b7c14bb07ca33',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-ChatbotEtudiant',
-            'version' => 'dev-ChatbotEtudiant',
-            'reference' => '021e2c354716f09dbb4415a1414bfedf4d8e0e7e',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '850c389437636b559d5871394a2b7c14bb07ca33',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -160,8 +160,8 @@
         'psr/http-client-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0',
-                1 => '*',
+                0 => '*',
+                1 => '1.0',
             ),
         ),
         'psr/http-factory' => array(
@@ -176,8 +176,8 @@
         'psr/http-factory-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0',
-                1 => '*',
+                0 => '*',
+                1 => '1.0',
             ),
         ),
         'psr/http-message' => array(
@@ -192,8 +192,8 @@
         'psr/http-message-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0',
-                1 => '*',
+                0 => '*',
+                1 => '1.0',
             ),
         ),
         'ralouphie/getallheaders' => array(
@@ -202,6 +202,24 @@
             'reference' => '120b605dfeb996808c31b6477290a714d356e822',
             'type' => 'library',
             'install_path' => __DIR__ . '/../ralouphie/getallheaders',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'setasign/fpdi' => array(
+            'pretty_version' => 'v2.6.2',
+            'version' => '2.6.2.0',
+            'reference' => '9e013b376939c0d4029f54150d2a16f3c67a5797',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../setasign/fpdi',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'spipu/html2pdf' => array(
+            'pretty_version' => 'v5.3.0',
+            'version' => '5.3.0.0',
+            'reference' => 'c71c189b5009e96b869ebf9eb93eee38c56bc9f0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../spipu/html2pdf',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

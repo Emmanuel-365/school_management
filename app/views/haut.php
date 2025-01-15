@@ -59,7 +59,7 @@ $user = $userController->readUser($_SESSION['user_id']);
                         alt="Photo de profil">
                     <span><?= $user->first_name . ' ' . $user->last_name ?></span>
                     <div class="user-dropdown">
-                        <a href="/change_password">Change profile information</a>
+                        <a href="/change-password">Change profile information</a>
                     </div>
                 </div>
             </header>

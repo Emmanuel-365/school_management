@@ -1,8 +1,7 @@
-# Cache de Composer
-vendor/
+
 
 #fichiers de configuration 
-/app/config/
+app/config/
 
 # Configurations locales
 .env
