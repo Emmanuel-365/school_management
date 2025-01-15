@@ -21,9 +21,9 @@ $subjects = $subjectController->readAllSubjects();
 
 
 <div class="search-container">
-    <input type="text" id="search" placeholder="Search for a subject..." />
+    <input type="text" id="search" data-translate-placeholder="search_placeholder"  />
     <?php if ($database->isAdmin()) : ?>
-        <a href="/subjects/create" class="add-button">Add Subject</a>
+        <a href="/subjects/create" class="add-button" data-translate="add_subject">Add Subject</a>
     <?php endif ?>
 </div>
 
@@ -31,9 +31,9 @@ $subjects = $subjectController->readAllSubjects();
     <thead>
         <tr>
             <th><center>ID</center></th>
-            <th><center>Name</center></th>
-            <th><center>Teacher</center></th>
-            <th><center>Niveau</center></th>
+            <th data-translate="name"><center>Name</center></th>
+            <th data-translate="teacher"><center>Teacher</center></th>
+            <th><center data-translate="level">Niveau</center></th>
             <th><center>Actions</center></th>
         </tr>
     </thead>

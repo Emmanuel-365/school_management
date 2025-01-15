@@ -46,12 +46,12 @@ foreach ($grades as $grade) {
 
 <table >
     <tr>
-        <th>Subject</th>
+        <th data-translate="subject">Subject</th>
         <th>CC</th>
         <th>TP</th>
-        <th>Rattrapage</th>
-        <th>Exam</th>
-        <th>Grade Date</th>
+        <th data-translate="ratrapage">Rattrapage</th>
+        <th data-translate="exam">Exam</th>
+        <th data-translate="issue">Grade Date</th>
         <?php if($database->isAdmin()) : ?>
         <th>Actions</th>
         <?php endif ?>

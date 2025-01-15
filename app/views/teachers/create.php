@@ -33,15 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php  ?>
-    <h3>Adding Teacher page</h3>
+    <h3 data-translate="atp">Adding Teacher page</h3>
     <form method="POST" action="">
         <div class="form-row">
             <div class="form-group">
-            <label for="first_name">First Name:</label>
+            <label for="first_name" data-translate="first_name">First Name:</label>
             <input type="text" id="first_name" name="first_name" required>
             </div>
             <div class="form-group">
-            <label for="last_name">Last Name:</label>
+            <label for="last_name" data-translate="last_name">Last Name:</label>
             <input type="text" id="last_name" name="last_name" required>
             </div>
         </div>
@@ -51,24 +51,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
-                <label for="phone">Phone:</label>
+                <label for="phone" data-translate="phone">Phone:</label>
                 <input type="text" id="phone" name="phone" required>
                 <div class="error-message"></div>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
-            <label for="specialty">Specialty:</label>
+            <label for="specialty" data-translate="specialty">Specialty:</label>
             <input type="text" id="specialty" name="specialty" required>
             </div>
             <div class="form-group">
-            <label for="hire_date">Hire Date:</label>
+            <label for="hire_date" data-translate="hire">Hire Date:</label>
             <input type="date" id="hire_date" name="hire_date" required>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
-        <label for="status">Status:</label>
+        <label for="status" data-translate="status">Status:</label>
             <select id="status" name="status" required>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <center>
             <div class="form-group center">
-               <button type="submit">Add Teacher</button>
+               <button type="submit" data-translate="add_teacher">Add Teacher</button>
             </div>
         </center>
     </form>

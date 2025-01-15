@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reçu de Paiement</title>
+    <title>Reçu de Paiement - École Keyce</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
+            --primary-color: #1e40af;
+            --secondary-color: #3b82f6;
+            --accent-color: #f97316;
             --text-color: #333;
-            --background-color: #f4f4f4;
+            --background-color: #f0f4f8;
             --card-background: #ffffff;
         }
         body {
@@ -23,18 +24,18 @@
             padding: 20px;
         }
         .container {
-            max-width: 400px; 
+            max-width: 800px; 
             margin: 0 auto;
             background-color: var(--card-background);
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            /* overflow: hidden; */
         } 
         .header {
             background-color: var(--primary-color);
             color: white;
             text-align: center;
             padding: 20px;
+            border-radius: 8px 8px 0 0;
         }
         .logo {
             max-width: 150px;
@@ -90,65 +91,68 @@
             text-align: center;
             padding: 15px;
             font-size: 14px;
+            border-radius: 0 0 8px 8px;
         }
         .icon {
             margin-right: 10px;
-            color: var(--secondary-color);
+            color: var(--accent-color);
+        }
+        .school-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .school-details {
+            text-align: right;
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100px;
+            color: rgba(30, 64, 175, 0.1);
+            pointer-events: none;
+            z-index: 1;
         }
 
-        @page {
-    size: A4 portrait;
-    margin: 0;
-}
-
-body {
-    width: 21cm;
-    height: 29.7cm;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--background-color);
-}
-
-.container {
-    width: 10cm; /* Laisse une marge intérieure */
-    height: auto;
-    background-color: var(--card-background);
-    padding: 1.5cm; /* Ajoute une marge interne */
-    box-shadow: none; /* Désactive les ombres si c'est pour une impression */
-    border-radius: 0; /* Les coins arrondis peuvent ne pas être nécessaires pour l'impression */
-}
-
-@media print {
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        padding: 0;
-    }
-
-    .container {
-        box-shadow: none;
-        margin: 0;
-        padding: 1.5cm;
-    }
-
-    .footer {
-        font-size: 12px; /* Réduit la taille des textes si nécessaire */
-    }
-}
-
+        @media print {
+            body {
+                width: 21cm;
+                height: 29.7cm;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                width: 18cm;
+                height: auto;
+                box-shadow: none;
+                margin: 0 auto;
+                padding: 1.5cm;
+            }
+            .watermark {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <!-- <img src="../images/keyce_logo.png"  alt="Logo de l'école" class="logo"> -->
+            <img src="/images/keyce_logo.png" alt="Logo de l'école Keyce" class="logo">
             <h1 class="receipt-title">Reçu de Paiement</h1>
         </div>
         <div class="receipt-body">
+            <div class="school-info">
+                <div>
+                    <h2>École Keyce</h2>
+                    <p>Campus l'atelier, <br>Yaoundé, Titi Garage</p>
+                </div>
+                <div class="school-details">
+                    <p>Tél: (+237) 659 42 33 35<br>Email: africa@keyce-informatique.fr</p>
+                </div>
+            </div>
             <div class="section">
                 <h2 class="section-title"><i class="fas fa-user icon"></i>Informations de l'Étudiant</h2>
                 <div class="info-grid">
@@ -197,8 +201,9 @@ body {
         <div class="footer">
             Ce reçu est généré électroniquement et ne nécessite pas de signature physique.
             <br>
-            <?php echo $schoolName; ?> - <?php echo date('Y'); ?>
+            École Keyce - <?php echo date('Y'); ?>
         </div>
     </div>
+    <div class="watermark">PAYÉ</div>
 </body>
 </html>

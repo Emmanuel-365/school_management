@@ -4,6 +4,8 @@
     <script src="/js/lang.js" defer></script>
     <script src="/js/student_script.js"></script>
     <script src="/js/chatbot.js"></script>
+    <!-- design delete popup -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
         <script>
     document.addEventListener('DOMContentLoaded', function () {
