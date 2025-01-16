@@ -31,73 +31,70 @@ $bulletinController = new BulletinController($db);
 
 <head>
     <meta charset="UTF-8">
-    <title>keyce management</title>
+    <title data-translate="page_title">keyce management</title>
     <link rel="icon" href="../images/Keyce_logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="../student_style.css">
-
 </head>
 
 <body>
     <div class="dashboard">
         <main class="content">
             <div class="dashboard-content">
-                <h1>Welcome to your Student Management Side</h1>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <i class="fas fa-user-graduate"></i>
-                        <h3>Total moyenne</h3>
-                        <p>1,234</p>
+                        <h3 data-translate="total_average">Total moyenne</h3>
+                        <p>4</p>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-chalkboard-teacher"></i>
-                        <h3>Total des sous moyennes</h3>
-                        <p>56</p>
+                        <h3 data-translate="total_sub_averages">Total des sous moyennes</h3>
+                        <p>5</p>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-book"></i>
-                        <h3>Total Courses</h3>
-                        <p>78</p>
+                        <h3 data-translate="total_courses">Total Courses</h3>
+                        <p>7</p>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-graduation-cap"></i>
-                        <h3>pourcentage de reussite</h3>
+                        <h3 data-translate="success_rate">Pourcentage de réussite</h3>
                         <p>95%</p>
                     </div>
                 </div>
                 <div class="charts-container">
                     <div class="chart">
-                        <h3>Student Enrollment</h3>
+                        <h3 data-translate="student_enrollment">Inscription des étudiants</h3>
                         <canvas id="enrollmentChart"></canvas>
                     </div>
                     <div class="chart">
-                        <h3>Performance Overview</h3>
+                        <h3 data-translate="performance_overview">Aperçu des performances</h3>
                         <canvas id="performanceChart"></canvas>
                     </div>
                 </div>
             </div>
         </main>
         <div id="chatbot-container" class="chatbot-closed">
-        <div id="chatbot-header">
-            <h3><i class="fas fa-robot"></i> Assistant Étudiant</h3>
-            <button id="close-chatbot"><i class="fas fa-times"></i></button>
+            <div id="chatbot-header">
+                <h3 data-translate="student_assistant"><i class="fas fa-robot"></i> Assistant Étudiant</h3>
+                <button id="close-chatbot"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="chat-messages"></div>
+            <form id="chat-form">
+                <input type="text" id="user-input" placeholder="Posez votre question ici..." autocomplete="off" data-translate="ask_question">
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
         </div>
-        <div id="chat-messages"></div>
-        <form id="chat-form">
-            <input type="text" id="user-input" placeholder="Posez votre question ici..." autocomplete="off">
-            <button type="submit"><i class="fas fa-paper-plane"></i></button>
-        </form>
-    </div>
-    <button id="open-chatbot" class="chatbot-toggle">
-        <i class="fas fa-comments"></i> Besoin d'aide ?
-    </button>
+        <button id="open-chatbot" class="chatbot-toggle" data-translate="need_help">
+            <i class="fas fa-comments"></i> Besoin d'aide ?
+        </button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../script.js"></script>
     <script src="../student_script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 
 </html>

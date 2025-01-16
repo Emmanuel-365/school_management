@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php  ?>
-    <h3>Adding Grade page</h3>
+    <h3 data-translate="adding_grade">Adding Grade page</h3>
     <form method="POST" action="">
         <input type="text" id="subject_id" name="subject_id" value="<?=$_GET['subject_id'] ?>" hidden>
 
@@ -49,13 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-row">
     <div class="form-group">
-    <label for="grade">Grade:</label>
+    <label for="grade" data-translate="grade">Grade:</label>
     <input type="number" id="grade" name="grade" step="0.01" required>
     </div>
 </div>
         <center>
             <div class="form-group center">
-            <button type="submit">Add Grade</button>
+            <button type="submit" data-translate="add_grade">Add Grade</button>
             </div>
         </center>
     </form>

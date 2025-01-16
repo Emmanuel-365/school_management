@@ -31,38 +31,38 @@ if (!$student) {
 <div class="dashboard">
     <div class="content">
         <div class="dashboard-content">
-            <h3>Profil Étudiant</h3>
+            <h3 data-translate="student_profile">Profil Étudiant</h3>
             <div class="profile-card">
-            <img 
+                <img 
                     class="profile-picture" 
                     src="<?= htmlspecialchars($student->profile_picture ?? '/images/profiles/default_profile.jpg'); ?>" 
                     alt="Photo de profil">
                 <h2><?= htmlspecialchars($student->first_name . ' ' . $student->last_name); ?></h2>
-                <p><strong>Nom d'utilisateur :</strong> <?= htmlspecialchars($student->username); ?></p>
-                <p><strong>Email :</strong> <?= htmlspecialchars($student->email); ?></p>
-                <p><strong>Téléphone :</strong> <?= htmlspecialchars($student->phone); ?></p>
-                <p><strong>Classe :</strong> <?= htmlspecialchars($class); ?></p>
-                <p><strong>Matricule :</strong> <?= htmlspecialchars($student->matricule); ?></p>
-                <p><strong>Date de naissance :</strong> <?= htmlspecialchars($student->date_of_birth); ?></p>
-                <p><strong>Adresse :</strong> <?= htmlspecialchars($student->address); ?></p>
-                <p><strong>Parent :</strong> <?= htmlspecialchars($parent); ?></p>
-                <p><strong>Frais restants :</strong> $<?= htmlspecialchars($student->remaining_fee); ?></p>
-                <p><strong>Date d'inscription :</strong> <?= htmlspecialchars($student->registration_date); ?></p>
+                <p><strong data-translate="username">Nom d'utilisateur :</strong> <?= htmlspecialchars($student->username); ?></p>
+                <p><strong data-translate="email">Email :</strong> <?= htmlspecialchars($student->email); ?></p>
+                <p><strong data-translate="phone">Téléphone :</strong> <?= htmlspecialchars($student->phone); ?></p>
+                <p><strong data-translate="class">Classe :</strong> <?= htmlspecialchars($class); ?></p>
+                <p><strong data-translate="matricule">Matricule :</strong> <?= htmlspecialchars($student->matricule); ?></p>
+                <p><strong data-translate="date_of_birth">Date de naissance :</strong> <?= htmlspecialchars($student->date_of_birth); ?></p>
+                <p><strong data-translate="address">Adresse :</strong> <?= htmlspecialchars($student->address); ?></p>
+                <p><strong data-translate="parent">Parent :</strong> <?= htmlspecialchars($parent); ?></p>
+                <p><strong data-translate="remaining_fee">Frais restants :</strong> $<?= htmlspecialchars($student->remaining_fee); ?></p>
+                <p><strong data-translate="registration_date">Date d'inscription :</strong> <?= htmlspecialchars($student->registration_date); ?></p>
             </div>
         </div>
     </div>
 </div>
 <div id="chatbot-container" class="chatbot-closed">
-        <div id="chatbot-header">
-            <h3><i class="fas fa-robot"></i> Assistant Étudiant</h3>
-            <button id="close-chatbot"><i class="fas fa-times"></i></button>
-        </div>
-        <div id="chat-messages"></div>
-        <form id="chat-form">
-            <input type="text" id="user-input" placeholder="Posez votre question ici...">
-            <button type="submit"><i class="fas fa-paper-plane"></i></button>
-        </form>
+    <div id="chatbot-header">
+        <h3 data-translate="assistant_student"><i class="fas fa-robot"></i> Assistant Étudiant</h3>
+        <button id="close-chatbot"><i class="fas fa-times"></i></button>
     </div>
-    <button id="open-chatbot" class="chatbot-toggle">
-        <i class="fas fa-comments"></i> Besoin d'aide ?
-    </button>
+    <div id="chat-messages"></div>
+    <form id="chat-form">
+        <input type="text" id="user-input"  data-translate-placeholder="ask_question">
+        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+    </form>
+</div>
+<button id="open-chatbot" class="chatbot-toggle" data-translate="need_help">
+    <i class="fas fa-comments"></i> Besoin d'aide ?
+</button>

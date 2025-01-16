@@ -10,7 +10,6 @@ $userController = new UserController($db);
 $user = $userController->readUser($_SESSION['user_id']);
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,6 +20,7 @@ $user = $userController->readUser($_SESSION['user_id']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/styles.css" title="light">
     <link rel="stylesheet" href="/css/dark_style.css" title="dark">
+    <link rel="stylesheet" href="/css/student_styles.css">
     <link rel="stylesheet" href="/css/chatbot.css">
     <!-- pour le PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
@@ -53,13 +53,14 @@ $user = $userController->readUser($_SESSION['user_id']);
                         <option value="fr" data-flag="/images/flags/fr.png">Français</option>
                     </select>
                 </div>
+
                 <div class="user-info">
                     <img class="profile-picture"
                         src="<?= htmlspecialchars($user->profile_picture ?? '/images/profiles/default_profile.jpg'); ?>"
                         alt="Photo de profil">
-                    <span><?= $user->first_name . ' ' . $user->last_name ?></span>
+                        <span><?= $user->first_name . ' ' . $user->last_name ?></span>
                     <div class="user-dropdown">
-                        <a href="/change-password">Change profile information</a>
+                        <a href="/change_password" data-translate="pass_change"></a>
                     </div>
                 </div>
             </header>

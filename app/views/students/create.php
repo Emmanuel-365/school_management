@@ -118,13 +118,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="error-message"></div>
             </div>
             <div class="form-group">
-            <label for="address">Address:</label>
+            <label for="address" data-translate="address">Address:</label>
             <input type="text" id="address" name="address" required>
             </div>  
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label for="class_id">Class:</label>
+                <label for="class_id" data-translate="class">Class:</label>
                 <select id="class_id" name="class_id" required>
                     <option value="" disabled selected>Select a class</option>
                     <?php foreach ($classes as $class): ?>
@@ -134,33 +134,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="form-group">
-            <label for="parent_first_name">Parent First Name:</label>
+            <label for="parent_first_name" data-translate="parent_name1">Parent First Name:</label>
             <input type="text" id="parent_first_name" name="parent_first_name" required>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
-            <label for="parent_last_name">Parent Last Name:</label>
+            <label for="parent_last_name" data-translate="parent_name2">Parent Last Name:</label>
             <input type="text" id="parent_last_name" name="parent_last_name" required>
             </div>
             <div class="form-group">
-            <label for="parent_email">Parent Email:</label>
+            <label for="parent_email" data-translate="email">Parent Email:</label>
             <input type="email" id="parent_email" name="parent_email" required>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
-            <label for="parent_phone">Parent Phone:</label>
+            <label for="parent_phone" data-translate="phone">Parent Phone:</label>
             <input type="text" id="parent_phone" name="parent_phone" required>
             <div class="error-message"></div>
             </div>
             <div class="form-group">
-            <label for="profile_picture">Profile Picture:</label>
+            <label for="profile_picture" data-translate="profile_picture">Profile Picture:</label>
             <input type="file" id="profile_picture" name="profile_picture">
             </div>
         </div>
         <center><div class="form-group center">
-                    <button type="submit">create student</button>
+                    <button type="submit" data-translate="create_student">create student</button>
                 </div></center>
     </form>
 

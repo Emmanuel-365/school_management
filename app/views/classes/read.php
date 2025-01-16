@@ -15,17 +15,17 @@ $classes = $classController->readAllClasses();
 
 
 <div class="search-container">
-    <input type="text" id="search" placeholder="Search for a class..." />
-    <a href="/classes/create" class="add-button">Add Class</a>
+    <input type="text" id="search" data-translate-placeholder="search_placeholder" />
+    <a href="/classes/create" class="add-button" data-translate="add_class">Add Class</a>
 </div>
 
 <table id="classTable">
     <thead>
         <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Level</th>
-            <th>Total Fee</th>
+            <th data-translate="name">Name</th>
+            <th data-translate="level">Level</th>
+            <th data-translate="t_fee">Total Fee</th>
             <th>Actions</th>
         </tr>
     </thead>

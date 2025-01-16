@@ -19,14 +19,14 @@ if($database->isStudent()){
 
 
             <div class="search-container">
-                <input type="text" id="search" placeholder="Search for a payment..." />
+                <input type="text" id="search" data-translate-placeholder="search_placeholder" />
             </div>
     <table >
         <tr>
             <th>ID</th>
-            <th>Student</th>
-            <th>Amount</th>
-            <th>Payment Date</th>
+            <th data-translate="student">Student</th>
+            <th data-translate="amount">Amount</th>
+            <th data-translate="date_payment">Payment Date</th>
             <!-- <th>Actions</th> -->
         </tr>
         <?php foreach ($payments as $payment): ?>

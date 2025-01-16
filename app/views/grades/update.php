@@ -42,18 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php  ?>
-    <h3>Updating Grade page</h3>
+    <h3 data-translate="up_grade">Updating Grade page</h3>
     <form method="POST" action="">
         <input type="hidden" name="id" value="<?php echo isset($grade) ? $grade->id : ''; ?>">
 <div class="form-row">
     <div class="form-group">
-    <label for="grade">Grade:</label>
+    <label for="grade" data-translate="grade">Grade:</label>
     <input type="number" id="grade" name="grade" step="0.01" value="<?php echo isset($grade) ? $grade->grade : ''; ?>" required>
     </div>
 </div>
 <center>
     <div class="form-group center">
-    <button type="submit">Update Grade</button>
+    <button type="submit" data-translate="update">Update Grade</button>
     </div>
 </center>
     </form>

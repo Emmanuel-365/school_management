@@ -19,4 +19,4 @@ $userController = new UserController($db);
 $userController->logout();
 header('Location: /login');
 exit;
-?>
+
