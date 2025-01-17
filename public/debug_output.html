@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reçu de Paiement</title>
+    <title>Reçu de Paiement - École Keyce</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
+            --primary-color: #1e40af;
+            --secondary-color: #3b82f6;
+            --accent-color: #f97316;
             --text-color: #333;
-            --background-color: #f4f4f4;
+            --background-color: #f0f4f8;
             --card-background: #ffffff;
         }
         body {
@@ -23,18 +24,18 @@
             padding: 20px;
         }
         .container {
-            max-width: 400px; 
+            max-width: 800px; 
             margin: 0 auto;
             background-color: var(--card-background);
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            /* overflow: hidden; */
         } 
         .header {
             background-color: var(--primary-color);
             color: white;
             text-align: center;
             padding: 20px;
+            border-radius: 8px 8px 0 0;
         }
         .logo {
             max-width: 150px;
@@ -90,79 +91,82 @@
             text-align: center;
             padding: 15px;
             font-size: 14px;
+            border-radius: 0 0 8px 8px;
         }
         .icon {
             margin-right: 10px;
-            color: var(--secondary-color);
+            color: var(--accent-color);
+        }
+        .school-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .school-details {
+            text-align: right;
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100px;
+            color: rgba(30, 64, 175, 0.1);
+            pointer-events: none;
+            z-index: 1;
         }
 
-        @page {
-    size: A4 portrait;
-    margin: 0;
-}
-
-body {
-    width: 21cm;
-    height: 29.7cm;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--background-color);
-}
-
-.container {
-    width: 10cm; /* Laisse une marge intérieure */
-    height: auto;
-    background-color: var(--card-background);
-    padding: 1.5cm; /* Ajoute une marge interne */
-    box-shadow: none; /* Désactive les ombres si c'est pour une impression */
-    border-radius: 0; /* Les coins arrondis peuvent ne pas être nécessaires pour l'impression */
-}
-
-@media print {
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        padding: 0;
-    }
-
-    .container {
-        box-shadow: none;
-        margin: 0;
-        padding: 1.5cm;
-    }
-
-    .footer {
-        font-size: 12px; /* Réduit la taille des textes si nécessaire */
-    }
-}
-
+        @media print {
+            body {
+                width: 21cm;
+                height: 29.7cm;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                width: 18cm;
+                height: auto;
+                box-shadow: none;
+                margin: 0 auto;
+                padding: 1.5cm;
+            }
+            .watermark {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <!-- <img src="../images/keyce_logo.png"  alt="Logo de l'école" class="logo"> -->
+            <img src="images\Keyce_logo.png" alt="Logo de l'école Keyce" class="logo">
             <h1 class="receipt-title">Reçu de Paiement</h1>
         </div>
         <div class="receipt-body">
+            <div class="school-info">
+                <div>
+                    <h2>École Keyce</h2>
+                    <p>Campus l'atelier, <br>Yaoundé, Titi Garage</p>
+                </div>
+                <div class="school-details">
+                    <p>Tél: (+237) 659 42 33 35<br>Email: africa@keyce-informatique.fr</p>
+                </div>
+            </div>
             <div class="section">
                 <h2 class="section-title"><i class="fas fa-user icon"></i>Informations de l'Étudiant</h2>
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Nom de l'Étudiant</div>
-                        <div class="info-value">User4 LastName4</div>
+                        <div class="info-value">User16 LastName16</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Numéro d'Étudiant</div>
-                        <div class="info-value">4</div>
+                        <div class="info-value">16</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Classe</div>
-                        <div class="info-value">M2 jour</div>
+                        <div class="info-value">B2A</div>
                     </div>
                 </div>
             </div>
@@ -172,32 +176,35 @@ body {
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Numéro de Reçu</div>
-                        <div class="info-value">47</div>
+                        <div class="info-value">82</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Date de Paiement</div>
-                        <div class="info-value">2025-01-15 09:59:34</div>
+                        <div class="info-value">2025-01-17 15:06:13</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Montant Payé</div>
-                        <div class="info-value">80000.00 €</div>
+                        <div class="info-value">100000.00 FCFA</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Solde Restant</div>
-                        <div class="info-value">370000.00 €</div>
+                        <div class="info-value">1100000.00 FCFA</div>
                     </div>
                 </div>
             </div>
             
-            <div class="qr-code">
-                <img src="data:image/png;base64,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" alt="QR Code de la signature numérique">
+            <!-- <div class="qr-code">
+                <img src="<br />
+<b>Warning</b>:  Undefined variable $qrCodeImage in <b>D:\Keyce\B2\semestre_1\php\school_management\app\views\payments\payment_receipt_template.php</b> on line <b>197</b><br />
+" alt="QR Code de la signature numérique">
                 <p>Signature Numérique</p>
-            </div>
+            </div> -->
         </div>
         <div class="footer">
-            Ce reçu est généré électroniquement et ne nécessite pas de signature physique.
+            <!-- Ce reçu est généré électroniquement et ne nécessite pas de signature physique. -->
             <br>
-            Nom de l'École - 2025        </div>
+            École Keyce - 2025        </div>
     </div>
+    <div class="watermark">PAYÉ</div>
 </body>
 </html>

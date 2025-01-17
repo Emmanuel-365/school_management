@@ -19,6 +19,13 @@ $classController = new ClassController($db);
 $subjects = $subjectController->readAllSubjects();
 ?>
 
+<?php 
+$teachers = [];
+foreach($subjects as $subject){
+    $teachers[] = $teacherController->readTeacherWithUsersInformations($subject->teacher_id);
+}
+?>
+
 
 <div class="search-container">
     <input type="text" id="search" data-translate-placeholder="search_placeholder"  />
@@ -70,6 +77,7 @@ $subjects = $subjectController->readAllSubjects();
 
     <script>
     const allSubjects = <?= json_encode($subjects) ?>; 
+    const allTeachers = <?= json_encode($teachers) ?>;
     const isAdmin = <?= json_encode($database->isAdmin()) ?>; 
     const isTeacher = <?= json_encode($database->isTeacher()) ?>;
     let currentPage = 1;
@@ -81,11 +89,13 @@ $subjects = $subjectController->readAllSubjects();
         tbody.innerHTML = ''; // Vider le tableau existant
 
         subjects.forEach(subject => {
+            const teacher = allTeachers.find(teacher => teacher.id === subject.teacher_id);
+            console.log(teacher);
             let row = `
                 <tr>
                     <td><center>${subject.id}</center></td>
                     <td><center>${subject.name}</center></td>
-                    <td><center>${subject.teacher_id || 'Aucun enseignant'}</center></td>
+                    <td><center>${teacher.first_name + ' ' + teacher.last_name || 'Aucun enseignant'}</center></td>
                     <td><center>${subject.level}</center></td>
                     <td><center>`;
             if (isAdmin) {
@@ -117,12 +127,15 @@ $subjects = $subjectController->readAllSubjects();
     // Fonction pour rechercher des sujets
     function filterSubjects(query) {
         const filteredSubjects = allSubjects.filter((subject) => {
+            const teacher = allteachers.find(teacher => teacher.id === student.teacher_id);
+
             const name = `${subject.name}`.toLowerCase();
             const level = (subject.level || '').toLowerCase();
 
             return (
                 name.includes(query) ||
-                level.includes(query)
+                level.includes(query) ||
+                teacherName.includes(query) 
             );
         });
 

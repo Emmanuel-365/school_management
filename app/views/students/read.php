@@ -28,6 +28,17 @@ if(isset($_GET['subject_id'])) {
     $students = $studentController->readAllStudentsWithUsersInformations();
 ?>
 
+<?php
+$parents = [];
+foreach($students as $student){
+    $parents[] = $parentController->readParent($student->parent_id);
+}
+$classes = [];
+foreach($students as $student){
+    $classes[] = $classController->readclass($student->class_id);
+}
+?>
+
 
             <div class="search-container">
                 <input type="text" id="search" data-translate-placeholder="search_placeholder" />
@@ -59,7 +70,6 @@ if(isset($_GET['subject_id'])) {
                     <?php foreach ($students as $student): 
                         $totalFee = $student->class_id != null ? $classController->readClass($student->class_id)->total_fee : 0;
                         $remainingFee = $student->remaining_fee;
-                        $status = $totalFee == 0 ? 'No Fee Data' : ($remainingFee == 0 ? 'Paid' : ($remainingFee < $totalFee ? 'Partial' : 'Unpaid'));
                         $profilePicture = !empty($student->profile_picture) ? $student->profile_picture : '/images/profiles/default_profile.jpg';
 
                         if($database->isTeacher()):
@@ -99,7 +109,7 @@ if(isset($_GET['subject_id'])) {
                         <?php if($database->isAdmin()) : ?>
                         <td><?php echo $parentController->readParent($student->parent_id)->first_name; ?></td>
                         <td><?php echo $student->remaining_fee; ?></td>
-                        <td><?php echo $status; ?></td>
+                        <td><?php echo $student->status; ?></td>
                         <?php endif ?>
                         
                         <?php if ($database->isTeacher()): ?>
@@ -158,10 +168,13 @@ if(isset($_GET['subject_id'])) {
     </div>
 <script>
     const allStudents = <?= json_encode($students) ?>;
+    const allParents = <?=json_encode($parents); ?>;
+    const allClasses = <?=json_encode($classes) ?>;
     const isAdmin = <?= json_encode($database->isAdmin()) ?>;
     const isTeacher = <?= json_encode($database->isTeacher()) ?>;
     let currentPage = 1;
     const itemsPerPage = 5;
+
 
     // Fonction pour afficher les étudiants dans le tableau
     function renderTable(students) {
@@ -169,23 +182,25 @@ if(isset($_GET['subject_id'])) {
         tbody.innerHTML = ''; // Vider le tableau
 
         students.forEach((student) => {
+            const parent = allParents.find(parent => parent.id === student.parent_id);
+            const classe = allClasses.find(classe => classe.id === student.class_id )
+
             const totalFee = student.total_fee || 0;
             const remainingFee = student.remaining_fee || 0;
-                            const status = <?= json_encode($status) ?>;
             const profilePicture = student.profile_picture || '/images/profiles/default_profile.jpg';
 
             let row = `
                 <tr>
                     <td><img src="${profilePicture}" alt="Photo" style="width: 50px; height: 50px; border-radius: 50%;"></td>
                     <td>${student.first_name} ${student.last_name}</td>
-                    <td>${student.class_id ? student.class_name : 'N/A'}</td>
+                    <td>${classe.name ?? 'N/A'}</td>
             `;
 
             if (isAdmin) {
                 row += `
-                    <td>${student.parent_id || 'N/A'}</td>
+                    <td>${parent.first_name + ' ' + parent.last_name || 'N/A'}</td>
                     <td>${remainingFee}</td>
-                    <td><?=$status?></td>
+                    <td>${student.status}</td>
                     <td>
                         <a href="/payments/create?student_id=${student.id}" class="action-button add-payment"><i class="fa-solid fa-credit-card"></i></a>
                         <a href="/students/update?id=${student.id}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>
@@ -224,14 +239,19 @@ if(isset($_GET['subject_id'])) {
     // Fonction pour rechercher des étudiants
     function filterStudents(query) {
         const filteredStudents = allStudents.filter((student) => {
+            const parent = allParents.find(parent => parent.id === student.parent_id);
+            const classe = allClasses.find(classe => classe.id === student.class_id );
+
             const fullName = `${student.first_name} ${student.last_name}`.toLowerCase();
             const className = (student.class_name || '').toLowerCase();
-            const parentName = (student.parent_name || '').toLowerCase();
+            const parentName = (parent.first_name + ' ' + parent.last_name || '').toLowerCase();
+            const classeName = (classe.name || '').toLowerCase();
 
             return (
                 fullName.includes(query) ||
                 className.includes(query) ||
-                parentName.includes(query)
+                parentName.includes(query) ||
+                classeName.includes(query)
             );
         });
 

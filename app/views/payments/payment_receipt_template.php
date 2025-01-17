@@ -140,7 +140,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="/images/keyce_logo.png" alt="Logo de l'école Keyce" class="logo">
+            <img src="images\Keyce_logo.png" alt="Logo de l'école Keyce" class="logo">
             <h1 class="receipt-title">Reçu de Paiement</h1>
         </div>
         <div class="receipt-body">
@@ -184,22 +184,22 @@
                     </div>
                     <div class="info-item">
                         <div class="info-label">Montant Payé</div>
-                        <div class="info-value"><?php echo $amountPaid; ?> €</div>
+                        <div class="info-value"><?php echo $amountPaid; ?> FCFA</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Solde Restant</div>
-                        <div class="info-value"><?php echo $remainingBalance; ?> €</div>
+                        <div class="info-value"><?php echo $remainingBalance; ?> FCFA</div>
                     </div>
                 </div>
             </div>
             
-            <div class="qr-code">
+            <!-- <div class="qr-code">
                 <img src="<?php echo $qrCodeImage; ?>" alt="QR Code de la signature numérique">
                 <p>Signature Numérique</p>
-            </div>
+            </div> -->
         </div>
         <div class="footer">
-            Ce reçu est généré électroniquement et ne nécessite pas de signature physique.
+            <!-- Ce reçu est généré électroniquement et ne nécessite pas de signature physique. -->
             <br>
             École Keyce - <?php echo date('Y'); ?>
         </div>

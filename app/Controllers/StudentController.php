@@ -3,18 +3,21 @@
 namespace App\Controllers;
 
 use App\Models\StudentModel;
+use Exception;
 
 class StudentController {
     protected $studentModel;
     protected $userController;
     protected $parentController;
     protected $studentCardController;
+    protected $classController;
 
     public function __construct($db) {
         $this->studentModel = new StudentModel($db);
         $this->userController = new UserController($db);
         $this->parentController = new ParentController($db);
         $this->studentCardController = new StudentCardController($db);
+        $this->classController = new ClassController($db);
     }
 
     // Méthode pour créer un étudiant
@@ -70,38 +73,34 @@ class StudentController {
 
     // Méthode pour lire un étudiant par ID
     public function readStudent($id): StudentModel {
-        return $this->studentModel->read($id);
+        $student = $this->studentModel->read($id);
+        return $student;
     }
 
     public function readStudentWithUsersInformations($id):StudentModel {
-        return $this->studentModel->readWithUsersInformations($id);
-    }
-
-    // Nouvelle méthode : Récupérer un étudiant par son ID
-    public function getStudentById($id) {
-        // Vérifie si l'ID est valide
-        if (!$id) {
-            throw new \InvalidArgumentException("L'ID de l'étudiant est requis.");
-        }
-
-        // Récupère l'étudiant via le modèle
-        $student = $this->studentModel->read($id);
-
-        // Vérifie si un étudiant est trouvé
-        if (!$student) {
-            throw new \RuntimeException("Aucun étudiant trouvé avec l'ID $id.");
-        }
-
+        $student =  $this->studentModel->readWithUsersInformations($id);
+        $this->getStatus($student);
         return $student;
     }
 
     // Méthode pour lire tous les étudiants
+    /**
+     * @return StudentModel[]
+     */
     public function readAllStudents() {
-        return $this->studentModel->readAll();
+        $students = $this->studentModel->readAll();
+        foreach ($students as $student) {
+            $this->getStatus($student);
+        }
+        return $students;
     }
 
     public function readAllStudentsWithUsersInformations() {
-        return $this->studentModel->readAllWithUsersInformations();
+        $students = $this->studentModel->readAllWithUsersInformations();
+        foreach ($students as $student) {
+            $this->getStatus($student);
+        }
+        return $students;
     }
 
     public function readStudentsByLevel($level) {
@@ -137,5 +136,43 @@ class StudentController {
     public function checkIsValidPassword($id){
         return $this->studentModel->isValidPassword($id);
     }
+
+    public function countStudents(){
+        return $this->studentModel->countStudents();
+    }
+
+    public function getStatus(&$student)
+{
+    // Vérification de `remaining_fee` et debug initial
+    if (!isset($student->remaining_fee) || !is_numeric($student->remaining_fee)) {
+            throw new Exception("Le champ `remaining_fee` est invalide ou non défini.");
+        }
+
+        // Récupérer les frais totaux pour la classe
+        $class = $this->classController->readClass($student->class_id);
+        if (!$class || !isset($class->total_fee)) {
+            throw new Exception("Impossible de récupérer `total_fee` pour la classe avec ID: " . $student->class_id);
+        }
+
+        $totalFee = (float)$class->total_fee; // Convertir en float pour éviter les problèmes de type
+        $remainingFee = (float)$student->remaining_fee; // Convertir en float pour éviter les problèmes de type
+
+        // Calculer le statut
+        if ($remainingFee == 0) {
+            $student->status = "payée";
+        } elseif ($remainingFee <= $totalFee / 2) {
+            $student->status = "solvable";
+        } else {
+            $student->status = "non solvable";
+        }
+
+        // Debugging pour valider les données
+        // var_dump([
+        //     'remaining_fee' => $remainingFee,
+        //     'total_fee' => $totalFee,
+        //     'status' => $student->status,
+        // ]);
+    }
+
 }
 ?>
