@@ -18,6 +18,8 @@ class StudentModel extends UserModel {
     public int $class;
     public int $parent;
 
+    public $status;
+
     public function __construct($db) {
         parent::__construct($db);
     }
@@ -27,6 +29,13 @@ class StudentModel extends UserModel {
         $sql = "SELECT COUNT(*) FROM " . static::$table . " WHERE class_id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$classId]);
+        return $stmt->fetchColumn();
+    }
+
+    public function countStudents() {
+        $sql = "SELECT COUNT(*) FROM " . static::$table;
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
         return $stmt->fetchColumn();
     }
 

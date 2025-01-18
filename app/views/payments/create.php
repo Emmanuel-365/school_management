@@ -9,6 +9,8 @@ use PHPMailer\PHPMailer\Exception;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Spipu\Html2Pdf\Html2Pdf;
+var_dump(__DIR__);
+
 
 // Initialisation de la base de données et des contrôleurs
 $database = new Database();
@@ -36,9 +38,9 @@ if (isset($_GET['student_id'])) {
             // Création du paiement et mise à jour du solde de l'étudiant
             $payment_id = $paymentController->createPayment($data);
             $payment = $paymentController->readPayment($payment_id);
-            $remaining_fee_previous = $studentController->readStudent($_POST['student_id'])->remaining_fee;
-            $remaining_fee_next = $remaining_fee_previous - $_POST['amount'];
-            $studentController->updateStudent($_POST['student_id'], ["remaining_fee" => $remaining_fee_next]);
+            // $remaining_fee_previous = $studentController->readStudent($_POST['student_id'])->remaining_fee;
+            // $remaining_fee_next = $remaining_fee_previous - $_POST['amount'];
+            // $studentController->updateStudent($_POST['student_id'], ["remaining_fee" => $remaining_fee_next]);
 
             // Génération du reçu et envoi par e-mail
             sendPaymentReceipt($payment, $student);
@@ -63,11 +65,6 @@ function sendPaymentReceipt($payment, $student) {
     $parent = $parentController->readParent($student->parent_id);
     $class = $classController->readClass($student->class_id);
 
-    // Génération du QR Code
-    $qrCode = new QrCode('Signature numérique pour le paiement #' . $payment->id);
-    $writer = new PngWriter();
-    $result = $writer->write($qrCode);
-    $qrCodeImage = $result->getDataUri();
 
     // Données pour le template HTML
     $data = [
@@ -80,7 +77,6 @@ function sendPaymentReceipt($payment, $student) {
         'paymentDate' => $payment->created_at,
         'amountPaid' => $payment->amount,
         'remainingBalance' => $student->remaining_fee,
-        'qrCodeImage' => $qrCodeImage
     ];
 
     // Générer le contenu HTML du reçu
@@ -94,7 +90,6 @@ function sendPaymentReceipt($payment, $student) {
     try {
         $html2pdf = new Html2Pdf('P', 'A4', 'fr');
         $html2pdf->writeHTML($htmlContent);
-        file_put_contents('debug_output.html', $htmlContent); // Debugging (optionnel)
         $html2pdf->output($pdfFilePath, 'F'); // Sauvegarde le PDF
     } catch (Exception $e) {
         echo 'Erreur lors de la génération du PDF : ' . $e->getMessage();

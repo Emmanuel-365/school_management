@@ -2,6 +2,7 @@
 
 use App\Config\Database;
 use App\Controllers\PaymentController;
+use App\Controllers\StudentController;
 
 $database = new Database();
 
@@ -10,6 +11,7 @@ $db = $database->getConnection();
 
 // Initialisation des contrôleurs
 $paymentController = new PaymentController($db);
+$studentController = new StudentController($db);
 
 if($database->isStudent()){
     $payments = $paymentController->readPaymentsByStudent($_SESSION['user_id']);
@@ -32,7 +34,7 @@ if($database->isStudent()){
         <?php foreach ($payments as $payment): ?>
             <tr>
                 <td><?php echo $payment->id; ?></td>
-                <td><?php echo $payment->student_id; ?></td>
+                <td><?php echo  $studentController->readStudentWithUsersInformations($payment->student_id)->first_name . ' ' . $studentController->readStudentWithUsersInformations($payment->student_id)->last_name ; ?></td>
                 <td><?php echo $payment->amount; ?></td>
                 <td><?php echo $payment->created_at; ?></td>
             </tr>
