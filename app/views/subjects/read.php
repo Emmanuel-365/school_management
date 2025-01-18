@@ -15,8 +15,12 @@ $subjectController = new SubjectController($db);
 $teacherController = new TeacherController($db);
 $classController = new ClassController($db);
 
+if($database->isTeacher())
+    $subjects = $subjectController->readSubjectsByTeacher($_SESSION['user_id']);
+else
+    $subjects = $subjectController->readAllSubjects();
+
 // Lire toutes les matières
-$subjects = $subjectController->readAllSubjects();
 ?>
 
 <?php 

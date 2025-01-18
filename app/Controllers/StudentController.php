@@ -11,6 +11,7 @@ class StudentController {
     protected $parentController;
     protected $studentCardController;
     protected $classController;
+    protected $bulletinController;
 
     public function __construct($db) {
         $this->studentModel = new StudentModel($db);
@@ -18,6 +19,7 @@ class StudentController {
         $this->parentController = new ParentController($db);
         $this->studentCardController = new StudentCardController($db);
         $this->classController = new ClassController($db);
+        $this->bulletinController = new BulletinController($db);
     }
 
     // Méthode pour créer un étudiant
@@ -69,6 +71,14 @@ class StudentController {
             'expiry_date' => date('Y-m-d', strtotime('+1 year')),
         ];
         $this->studentCardController->createStudentCard($card_data);
+
+        $bulletin_data = [
+            'student_id' => $userId,
+            'class_id' => $data['class_id'],
+            'period' => date('Y'),
+            'issue_date' => date('Y-m-d'),
+        ];
+        $this->bulletinController->createBulletin($bulletin_data);
     }
 
     // Méthode pour lire un étudiant par ID

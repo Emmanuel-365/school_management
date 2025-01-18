@@ -172,6 +172,10 @@ foreach($students as $student){
     const allClasses = <?=json_encode($classes) ?>;
     const isAdmin = <?= json_encode($database->isAdmin()) ?>;
     const isTeacher = <?= json_encode($database->isTeacher()) ?>;
+    /**
+     * @type Array
+     */
+    const grades = <?=json_encode($grades); ?>;
     let currentPage = 1;
     const itemsPerPage = 5;
 
@@ -183,7 +187,7 @@ foreach($students as $student){
 
         students.forEach((student) => {
             const parent = allParents.find(parent => parent.id === student.parent_id);
-            const classe = allClasses.find(classe => classe.id === student.class_id )
+            const classe = allClasses.find(classe => classe.id === student.class_id );
 
             const totalFee = student.total_fee || 0;
             const remainingFee = student.remaining_fee || 0;
@@ -210,12 +214,36 @@ foreach($students as $student){
                 `;
             }
 
+            grades.forEach((grade) => {
+                if ($grade.student_id === $student.id){
+                    switch ($grade.type_note) {
+                        case 'cc':
+                            cc = grade.grade;
+                            ccId = grade.id;
+                            break;
+                        case 'tp':
+                            tp = grade.grade;
+                            tpId = grade.id;
+                            break;
+                        case 'rattrapage':
+                            rattrapage = grade.grade;
+                            rattrapageId = grade.id;
+                            break;
+                        case 'exam':
+                            exam = grade.grade;
+                            examId = grade.id;
+                            break;
+                    }
+                }
+            });
+                                
+
             if (isTeacher) {
                 row += `
-                    <td>${student.cc === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=cc" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.cc} <a href="/grades/update?id=${student.ccId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
-                    <td>${student.tp === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=tp" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.tp} <a href="/grades/update?id=${student.tpId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
-                    <td>${student.rattrapage === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=rattrapage" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.rattrapage} <a href="/grades/update?id=${student.rattrapageId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
-                    <td>${student.exam === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=exam" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.exam} <a href="/grades/update?id=${student.examId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
+                    <td>${cc === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=cc" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.cc} <a href="/grades/update?id=${student.ccId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
+                    <td>${tp === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=tp" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.tp} <a href="/grades/update?id=${student.tpId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
+                    <td>${rattrapage === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=rattrapage" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.rattrapage} <a href="/grades/update?id=${student.rattrapageId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
+                    <td>${exam === 'N/A' ? `<a href="/grades/create?subject_id=${student.subject_id}&student_id=${student.id}&type_note=exam" class="action-button add-payment"><i class="fa-solid fa-plus"></i></a>` : `${student.exam} <a href="/grades/update?id=${student.examId}" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a>`}</td>
                 `;
             }
 

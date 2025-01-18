@@ -27,6 +27,10 @@ class SubjectController {
         return $this->subjectModel->readAll();
     }
 
+    public function readSubjectsByTeacher($teacherId) {
+        return $this->subjectModel->findManyBy('teacher_id', $teacherId);
+    }
+
     // Méthode pour mettre à jour une matière
     public function updateSubject($id, $data) {
         return $this->subjectModel->update($id, $data);
