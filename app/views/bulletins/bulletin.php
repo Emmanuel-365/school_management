@@ -128,55 +128,6 @@ function getMention($average) {
 
 $mention = getMention($average);
 
-// Génération du hash unique pour le bulletin
-function generateHash($student, $grades, $average, $mention)
-{
-    $content = $student->first_name . $student->last_name . $student->matricule;
-    foreach ($grades as $grade) {
-        $content .= $grade->subject_id . $grade->grade; // Utilisation des propriétés de l'objet
-    }
-    $content .= $average . $mention;
-    return hash('sha256', $content);
-}
-
-$bulletinHash = generateHash($student, $grades, $average, $mention);
-
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
-
-// Créer une instance de QrCode avec le contenu
-$qrCode = new QrCode($bulletinHash);
-
-// Créer une instance du writer PNG
-$writer = new PngWriter();
-$qrCodeData = $writer->write($qrCode);
-$qrCodeData->saveToFile('qrcodes/qrcode.png');
-
-?>
-
-<?php
-// Charger la clé privée
-$privateKey = openssl_pkey_get_private(file_get_contents('../app/config/private_key.pem'));
-
-// Vérifier si la clé est valide
-if (!$privateKey) {
-    echo "La clé privée n'est pas valide.";
-    exit;
-}
-
-// Signer le hash du bulletin
-$signature = null;
-$hash = $bulletinHash;  // Le hash que tu as généré plus tôt
-$signatureValid = openssl_sign($hash, $signature, $privateKey, OPENSSL_ALGO_SHA256);
-
-if (!$signatureValid) {
-    echo "Erreur lors de la signature du bulletin.";
-    exit;
-}
-
-// Convertir la signature en base64 pour l'intégrer facilement dans le bulletin
-$signatureBase64 = base64_encode($signature);
-
 ?>
 
 <!DOCTYPE html>
@@ -387,8 +338,8 @@ $signatureBase64 = base64_encode($signature);
                 <table>
                     <thead>
                         <tr>
-                            <th>Matière</th>
-                            <th>Note</th>
+                            <th data-translate="subject">Matière</th>
+                            <th data-translate="grade">Note</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -407,7 +358,7 @@ $signatureBase64 = base64_encode($signature);
             </div>
             <div class="signature">
                 <p>Signature numérique: </p>
-                <img width="100" height="100" src="/qrcodes/qrcode.png" alt="code qr">
+                <img width="100" height="100" src="/images/signature.png" alt="code qr">
             </div>
                 <div class="container alert alert-danger">
                     <?php
@@ -423,10 +374,11 @@ $signatureBase64 = base64_encode($signature);
                 </div>
             <?php if(empty($missingIds)) : ?>
             <center>
-                <button id="downloadPdf">Télécharger le Bulletin</button>
+                <!-- <button id="downloadPdf">Télécharger le Bulletin</button> -->
                 <button id="sendEmailButton">Envoyer par e-mail</button>
             </center>
             <?php endif ?>
+            <button id="downloadPdf">Télécharger le Bulletin</button>
         </div>
     </div>
 </body>
@@ -436,16 +388,8 @@ $signatureBase64 = base64_encode($signature);
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPDF/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-    const student = <?= json_encode($student, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
-    const grades = <?= json_encode($grades) ?>;
-    const average = <?= json_encode($average) ?>;
-    const mention = <?= json_encode($mention) ?>;
-    const niveau = <?= json_encode($niveau, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
-    const bulletinId = <?= json_encode($bulletinId) ?>;
-    const parentEmail = <?= json_encode($parentEmail) ?>;
-
-    document.getElementById('downloadPdf').addEventListener('click', async () => {
-        const { jsPDF } = window.jspdf;
+   document.getElementById('downloadPdf').addEventListener('click', async () => {
+    const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         const element = document.querySelector('.container');
 
@@ -456,82 +400,43 @@ $signatureBase64 = base64_encode($signature);
         }).then(async function (canvas) {
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
             doc.addImage(imgData, 'JPEG', 10, 10, 180, 0);
-
+        try{
             // Convertir le PDF en blob
             const pdfBlob = doc.output('blob');
+        console.log('PDF généré :', pdfBlob);
 
-            // Créer une requête pour envoyer le PDF au serveur
-            const formData = new FormData();
-            formData.append('pdf', pdfBlob);
-            formData.append('bulletinId', bulletinId);
-
-            try {
-                const response = await fetch('/savepdf', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                const responseText = await response.text();
-                console.log('Réponse brute du serveur :', responseText);
-
-                const result = JSON.parse(responseText);
-
-                if (response.ok && result.success) {
-                    const downloadLink = document.createElement('a');
-                    downloadLink.href = result.file_url;
-                    downloadLink.download = 'bulletin_signed.pdf';
-                    downloadLink.click();
-                } else {
-                    alert('Erreur lors du traitement du PDF : ' + result.message);
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi du PDF au serveur :', error);
-                alert('Une erreur est survenue.');
-            }
-        });
-    });
-
-    // Fonction pour envoyer le bulletin par e-mail
-    async function sendEmail() {
-        const pdfUrl = '/uploads/bulletin_signed.pdf';
-
+        // Envoyer le PDF au serveur
         const formData = new FormData();
-        formData.append('student_email', student.email);
+        formData.append('pdf', pdfBlob, 'bulletin.pdf');
         formData.append('parent_email', 'emmanuelscre1@gmail.com');
+        formData.append('student_email', 'plazarecrute@gmail.com');
 
-        const response = await fetch(pdfUrl);
-        if (!response.ok) {
-            alert('Le fichier PDF n\'a pas pu être récupéré.');
-            return;
+        const response = await fetch('/sign_bulletin', {
+            method: 'POST',
+            body: formData
+        });
+        const responseText = await response.text();
+        console.log('reponse brute du serveur :', responseText);
+        console.log('Statut de la réponse :', response.status);
+        const result = await response.json();
+        console.log('Réponse du serveur :', result);
+
+        if (response.ok && result.success) {
+            alert('Le bulletin signé a été généré avec succès.');
+            const downloadLink = document.createElement('a');
+            downloadLink.href = result.file_url;
+            downloadLink.download = 'bulletin_signed.pdf';
+            downloadLink.click();
+        } else {
+            alert(`Erreur lors de la signature : ${result.message}`);
         }
-
-        const pdfBlob = await response.blob();
-        formData.append('pdf', pdfBlob, 'bulletin_signed.pdf');
-
-        try {
-            const sendResponse = await fetch('/send_mail', {
-                method: 'POST',
-                body: formData
-            });
-
-            const responseText = await sendResponse.text();
-            console.log('Réponse brute du serveur :', responseText);
-
-            const result = JSON.parse(responseText); // Parser la réponse JSON
-
-            if (sendResponse.ok && result.success) {
-                alert('Le bulletin a été envoyé avec succès');
-            } else {
-                alert('Erreur lors de l\'envoi du bulletin : ' + result.message);
-            }
-        } catch (error) {
-            console.error('Erreur lors de l\'envoi du bulletin :', error);
-            alert('Une erreur est survenue lors de l\'envoi.');
-        }
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi ou de la génération :', error);
+        alert('Une erreur est survenue lors de l\'envoi ou de la génération du bulletin.');
     }
+})});
 
-    // Attacher l'événement au bouton
-    document.getElementById('sendEmailButton').addEventListener('click', sendEmail);
 </script>
+
 
 </html>
