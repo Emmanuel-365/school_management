@@ -4,7 +4,7 @@ $routes = [
     "/" => "home.php",
     '/login' => 'users/login.php',
     '/logout' => 'users/logout.php',
-    '/change-password' => 'users/change_password.php',
+    '/change_password' => 'users/change_password.php',
 
     '/admin/' => 'admin/index.php', 
     '/admin' => 'admin/index.php',  
@@ -53,6 +53,7 @@ $routes = [
     '/bulletins/create' => 'bulletins/create.php',
 
     '/send_mail' => 'bulletins/send_mail.php',
+    '/sign_bulletin' => 'bulletins/sign_bulletin.php',
     '/savepdf' => 'bulletins/save_and_sign_pdf.php',
 
 
