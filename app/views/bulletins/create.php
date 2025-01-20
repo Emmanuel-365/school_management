@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'class_id' => $_POST['class_id'],
         'period' => $_POST['period'],
         'issue_date' => $_POST['issue_date'],
-        'comments' => $_POST['comments'],
     ];
 
     try {
@@ -68,12 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
             <label for="issue_date">Issue Date:</label>
             <input type="date" id="issue_date" name="issue_date" required>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-            <label for="comments">Comments:</label>
-            <textarea id="comments" name="comments"></textarea>
             </div>
         </div>
         <center><div class="form-group center">

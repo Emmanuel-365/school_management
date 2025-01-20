@@ -1,7 +1,6 @@
 
 
 #fichiers de configuration 
-app/config/
 
 # Configurations locales
 .env
@@ -9,3 +8,4 @@ app/config/
 # Logs et fichiers temporaires
 *.log
 *.cache
+public/uploads/bulletin_signed.pdf

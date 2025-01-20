@@ -320,6 +320,12 @@ $mention = getMention($average);
     </style>
 </head>
 <body>
+<?php if(empty($missingIds)) : ?>
+            <center>
+                <button id="downloadPdf" class="add-button">Télécharger le Bulletin</button>
+                <!-- <button id="sendEmailButton" class="add-button" style="background-color: var(--primary-color);">Envoyer par e-mail</button> -->
+            </center>
+            <?php endif ?>
     <div class="container">
         <div class="bulletin">
             <header class="header">
@@ -372,13 +378,7 @@ $mention = getMention($average);
                         }
                     ?>
                 </div>
-            <?php if(empty($missingIds)) : ?>
-            <center>
-                <!-- <button id="downloadPdf">Télécharger le Bulletin</button> -->
-                <button id="sendEmailButton">Envoyer par e-mail</button>
-            </center>
-            <?php endif ?>
-            <button id="downloadPdf">Télécharger le Bulletin</button>
+            
         </div>
     </div>
 </body>

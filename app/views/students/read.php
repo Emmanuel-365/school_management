@@ -53,6 +53,7 @@ foreach($students as $student){
                         <th data-translate="student_name"></th>
                         <th data-translate="class"></th>
                         <?php if($database->isAdmin()) : ?>
+                            <th>Matricule</th>
                             <th data-translate="parent"></th>
                             <th data-translate="remaining_fee"></th>
                             <th data-translate="status"></th>
@@ -107,6 +108,7 @@ foreach($students as $student){
                         <td><?php echo $student->first_name . ' ' . $student->last_name; ?></td>
                         <td><?php echo $student->class_id != null ? $classController->readClass($student->class_id)->name : 'N/A'; ?></td>
                         <?php if($database->isAdmin()) : ?>
+                        <td><?php echo $student->matricule ?></td>
                         <td><?php echo $parentController->readParent($student->parent_id)->first_name; ?></td>
                         <td><?php echo $student->remaining_fee; ?></td>
                         <td><?php echo $student->status; ?></td>
@@ -202,6 +204,7 @@ foreach($students as $student){
 
             if (isAdmin) {
                 row += `
+                    <td>${student.matricule}</td>
                     <td>${parent.first_name + ' ' + parent.last_name || 'N/A'}</td>
                     <td>${remainingFee}</td>
                     <td>${student.status}</td>
