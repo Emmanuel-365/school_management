@@ -45,6 +45,7 @@ foreach($subjects as $subject){
             <th data-translate="name"><center>Name</center></th>
             <th data-translate="teacher"><center>Teacher</center></th>
             <th><center data-translate="level">Niveau</center></th>
+            <th><center>credit</center></th>
             <th><center>Actions</center></th>
         </tr>
     </thead>
@@ -61,6 +62,7 @@ foreach($subjects as $subject){
                     ?></center>
                 </td>
                 <td><center><?= htmlspecialchars($subject->level); ?></center></td>
+                <td><center><?=$subject->credit ?? 3 ?></center></td>
                 <td>
                     <center><?php if($database->isAdmin()) : ?>
                         <a href="/subjects/update?id=<?php echo $subject->id; ?>" class="action-button update"><i class="fa-solid fa-pen-to-square"></i></a> 
@@ -101,6 +103,7 @@ foreach($subjects as $subject){
                     <td><center>${subject.name}</center></td>
                     <td><center>${teacher.first_name + ' ' + teacher.last_name || 'Aucun enseignant'}</center></td>
                     <td><center>${subject.level}</center></td>
+                    <td><center>${subject.credit}</center></td>
                     <td><center>`;
             if (isAdmin) {
                 row += `

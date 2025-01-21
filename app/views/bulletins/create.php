@@ -42,21 +42,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-row">
             <div class="form-group dynamic-dropdown">
                 <label for="student_id">Student:</label>
-                <input type="text" id="student_id" name="student_id" placeholder="Ex: Matias">
-                <ul class="options">
-                <?php foreach ($students as $student): ?>
-                    <li value="<?php echo $student->id; ?>"><?php echo $student->first_name . ' ' . $student->last_name; ?></li>
-                <?php endforeach; ?>
-                </ul>
+                <!-- <input type="text" id="student_id" name="student_id" placeholder="Ex: Matias"> -->
+                <select id="student_id" name="student_id" required>
+            <?php foreach ($students as $student): ?>
+                <option value="<?php echo $student->id; ?>" <?php echo isset($bulletin) && $bulletin->student_id == $student->id ? 'selected' : ''; ?>><?php echo $student->first_name . ' ' . $student->last_name; ?></option>
+            <?php endforeach; ?>
+        </select>
             </div>
             <div class="form-group dynamic-dropdown">
             <label for="class_id">Class:</label>
-             <input type="text" id="class_id" name="class_id"  placeholder="Ex: Bachelor 1">
-                <ul class="options">
-                <?php foreach ($classes as $class): ?>
-                    <li value="<?php echo $class->id; ?>" data-class="<?php echo $student->class_name; ?>"><?php echo $class->name; ?></li>
-                <?php endforeach; ?>
-                </ul>
+             <!-- <input type="text" id="class_id" name="class_id"  placeholder="Ex: Bachelor 1"> -->
+             <select id="class_id" name="class_id" required>
+            <?php foreach ($classes as $class): ?>
+                <option value="<?php echo $class->id; ?>" <?php echo isset($bulletin) && $bulletin->class_id == $class->id ? 'selected' : ''; ?>><?php echo $class->name; ?></option>
+            <?php endforeach; ?>
+        </select>
             </div>
         </div>
         <div class="form-row">

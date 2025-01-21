@@ -34,6 +34,10 @@ if (!$student) {
     echo "L'étudiant n'existe pas.";
     exit;
 }
+$finaleGradesAndRanks = ($studentController->getRankBySubject($student->id));
+
+$rankAndAverage = $studentController->getStudentTotalAverageAndRank($student->id, $student->class_id);
+
 
 $subjects = $subjectController->readSubjectByLevel($classController->readClass($student->class_id)->level);
 
@@ -58,56 +62,9 @@ $uniqueSubjectIds = array_unique($gradeSubjectIds);
 // Vérifier si tous les subject IDs des subjects sont dans les grades
 $missingIds = array_diff($SubjectIds, $gradeSubjectIds);
 
-// if (empty($missingIds)) {
-//     echo "Tous les sujets sont présents dans les grades.\n";
-// } else {
-//     echo "Les IDs suivants ne sont pas dans les grades : " . implode(', ', $missingIds) . "\n";
-// }
-
-$finalGrades = [];
-
-foreach ($grades as $grade) {
-    $subject_id = $grade->subject_id;
-    $type_note = $grade->type_note;
-    $gradeValue = $grade->grade;
-
-    if (!isset($finalGrades[$subject_id])) {
-        $finalGrades[$subject_id] = [
-            'cc' => 0,
-            'tp' => 0,
-            'exam' => 0,
-            'rattrapage' => 0,
-        ];
-    }
-
-    if (isset($finalGrades[$subject_id][$type_note])) {
-        $finalGrades[$subject_id][$type_note] = $gradeValue;
-    }
-}
-
-// Calculer la note finale pour chaque matière
-$subjectFinalGrades = [];
-
-foreach ($finalGrades as $subject_id => $notes) {
-    $cc = $notes['cc'];
-    $tp = $notes['tp'];
-    $exam = $notes['exam'];
-    $rattrapage = $notes['rattrapage'];
-
-    // Remplacer la note d'examen par la note de rattrapage si elle est plus élevée
-    if ($rattrapage > $exam) {
-        $exam = $rattrapage;
-    }
-
-    // Calculer la note finale pondérée
-    $finalGrade = ($cc * 0.2) + ($tp * 0.4) + ($exam * 0.4);
-    $subjectFinalGrades[$subject_id] = $finalGrade;
-}
-
 $niveau = $classController->readClass($student->class_id)->level;
 
-// Calcul de la moyenne générale
-$average = array_sum($subjectFinalGrades) / count($subjectFinalGrades);
+$average = $rankAndAverage['average'];
 
 // Détermination de la mention
 function getMention($average) {
@@ -320,7 +277,7 @@ $mention = getMention($average);
     </style>
 </head>
 <body>
-<?php if(empty($missingIds)) : ?>
+<?php if(empty(!$missingIds)) : ?>
             <center>
                 <button id="downloadPdf" class="add-button">Télécharger le Bulletin</button>
                 <!-- <button id="sendEmailButton" class="add-button" style="background-color: var(--primary-color);">Envoyer par e-mail</button> -->
@@ -346,21 +303,27 @@ $mention = getMention($average);
                         <tr>
                             <th data-translate="subject">Matière</th>
                             <th data-translate="grade">Note</th>
+                            <th>Credit</th>
+                            <th>Rang</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($subjectFinalGrades as $subject_id => $finalGrade): ?>
+                        <?php foreach ($finaleGradesAndRanks as $subject_id => $finalGradeAndRank): ?>
                         <tr>
                             <td><?= $subjectController->readSubject($subject_id)->name ?></td>
-                            <td><?= number_format($finalGrade, 2) ?></td>
+                            <td><?= number_format($finalGradeAndRank['grade'], 2) ?></td>
+                            <td><?=number_format($subjectController->readSubject($subject_id)->credit) ?></td>
+                            <td><?=number_format($finalGradeAndRank['rank']) ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
             <div class="summary">
-                <p><strong>Moyenne Générale:</strong> <?= number_format($average, 2) ?></p>
+                <p><strong>Moyenne Générale:</strong> <?= $rankAndAverage['average']?></p>
                 <p><strong>Mention:</strong> <span class="mention"><?= htmlspecialchars($mention) ?></span></p>
+                <p><strong>Rang:</strong> <?= $rankAndAverage['rank']?></p>
+
             </div>
             <div class="signature">
                 <p>Signature numérique: </p>

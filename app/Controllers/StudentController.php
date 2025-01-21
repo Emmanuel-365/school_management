@@ -12,6 +12,8 @@ class StudentController {
     protected $studentCardController;
     protected $classController;
     protected $bulletinController;
+    protected $subjectController;
+    protected $gradeController;
 
     public function __construct($db) {
         $this->studentModel = new StudentModel($db);
@@ -20,6 +22,8 @@ class StudentController {
         $this->studentCardController = new StudentCardController($db);
         $this->classController = new ClassController($db);
         $this->bulletinController = new BulletinController($db);
+        $this->subjectController = new SubjectController($db);
+        $this->gradeController = new GradeController($db);
     }
 
     // Méthode pour créer un étudiant
@@ -182,6 +186,97 @@ class StudentController {
         //     'total_fee' => $totalFee,
         //     'status' => $student->status,
         // ]);
+    }
+
+    public function getRankBySubject($studentId){
+        $classId = $this->studentModel->read($studentId)->class_id;
+        $level = $this->classController->readClass($classId)->level;
+        $allgrades = $this->gradeController->readAllGradesByLevel($level);
+        $finalGrades = [];
+    
+        foreach ($allgrades as $grade) {
+            $student_id = $grade->student_id;
+            $subject_id = $grade->subject_id;
+            $type_note = $grade->type_note;
+            $gradeValue = $grade->grade;
+    
+            if (!isset($finalGrades[$student_id][$subject_id])) {
+                $finalGrades[$student_id][$subject_id] = [
+                    'cc' => 0,
+                    'tp' => 0,
+                    'exam' => 0,
+                    'rattrapage' => 0,
+                ];
+            }
+    
+            if (isset($finalGrades[$student_id][$subject_id][$type_note])) {
+                $finalGrades[$student_id][$subject_id][$type_note] = $gradeValue;
+            }
+        }
+    
+        $subjectFinalGrades = [];
+    
+        foreach($finalGrades as $student_id => $student_grades){
+            foreach ($student_grades as $subject_id => $notes) {
+                $cc = $notes['cc'];
+                $tp = $notes['tp'];
+                $exam = $notes['exam'];
+                $rattrapage = $notes['rattrapage'];
+    
+                if ($rattrapage > $exam) {
+                    $exam = $rattrapage;
+                }
+    
+                $finalGrade = ($cc * 0.2) + ($tp * 0.4) + ($exam * 0.4);
+                $subjectFinalGrades[$student_id][$subject_id] = $finalGrade;
+            }
+        }
+    
+        $rangs = [];
+    
+        foreach ($subjectFinalGrades as $etudiant => $matieres) {
+            foreach ($matieres as $matiere => $note) {
+                $rangs[$matiere][$etudiant] = $note;
+            }
+        }
+    
+        foreach ($rangs as $matiere => &$etudiants) {
+            arsort($etudiants);
+            
+            $rank = 1;
+            $prevNote = null;
+            $sameRankCount = 0;
+            
+            foreach ($etudiants as $etudiant => $note) {
+                if ($note === $prevNote) {
+                    $sameRankCount++;
+                } else {
+                    $rank += $sameRankCount;
+                    $sameRankCount = 1;
+                }
+                $prevNote = $note;
+                $etudiants[$etudiant] = $rank;
+            }
+            unset($etudiants);
+        }
+    
+        // Préparer le résultat final pour l'étudiant spécifié
+        $result = [];
+        foreach ($rangs as $matiere => $classement) {
+            if (isset($classement[$studentId])) {
+                $result[$matiere] = [
+                    'rank' => $classement[$studentId],
+                    'grade' => $subjectFinalGrades[$studentId][$matiere],
+                ];
+            }
+        }
+    
+        return $result; // Retourne les notes et rangs de l'étudiant spécifié
+    }
+    
+
+    public function getStudentTotalAverageAndRank($studentId, $classId){
+        return $this->studentModel->getStudentRankAndAverage($studentId, $classId);
     }
 
 }

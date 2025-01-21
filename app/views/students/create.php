@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $currentYear = date('Y');
     $studentCount = $studentController->countStudentsByClass($classId);
-    $matricule = $currentYear . $className . str_pad($studentCount + 1, 3, '0', STR_PAD_LEFT);
+    $matricule = $currentYear . $className . str_pad($studentCount + 2, 3, '0', STR_PAD_LEFT);
 
     $data['matricule'] = $matricule;
     $data['remaining_fee'] = $classController->readClass($data['class_id'])->total_fee; 

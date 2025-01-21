@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Exception;
 use PDO;
 
 class StudentModel extends UserModel {
@@ -82,8 +83,97 @@ class StudentModel extends UserModel {
         else
             return true;
     }
-}
-?>
 
-<?php 
+    function getStudentRankAndAverage($studentId, $classId) {
+        try {
+            // SQL pour récupérer les moyennes des étudiants et calculer le rang
+            $sql = "
+                SELECT
+                    g.student_id,
+                    s.class_id,
+                    SUM(
+                        (
+                            CASE 
+                                WHEN g.type_note = 'cc' THEN g.grade * 0.2
+                                WHEN g.type_note = 'tp' THEN g.grade * 0.4
+                                WHEN g.type_note = 'exam' THEN 
+                                    CASE 
+                                        WHEN EXISTS (
+                                            SELECT 1
+                                            FROM grades r
+                                            WHERE r.student_id = g.student_id
+                                            AND r.subject_id = g.subject_id
+                                            AND r.type_note = 'rattrapage'
+                                            AND r.grade > g.grade
+                                        )
+                                        THEN 0
+                                        ELSE g.grade * 0.4
+                                    END
+                                WHEN g.type_note = 'rattrapage' THEN g.grade * 0.4
+                                ELSE 0
+                            END
+                        ) * sub.credit
+                    ) / SUM(sub.credit) AS weighted_average,
+                    RANK() OVER (PARTITION BY s.class_id ORDER BY SUM(
+                        (
+                            CASE 
+                                WHEN g.type_note = 'cc' THEN g.grade * 0.2
+                                WHEN g.type_note = 'tp' THEN g.grade * 0.4
+                                WHEN g.type_note = 'exam' THEN 
+                                    CASE 
+                                        WHEN EXISTS (
+                                            SELECT 1
+                                            FROM grades r
+                                            WHERE r.student_id = g.student_id
+                                            AND r.subject_id = g.subject_id
+                                            AND r.type_note = 'rattrapage'
+                                            AND r.grade > g.grade
+                                        )
+                                        THEN 0
+                                        ELSE g.grade * 0.4
+                                    END
+                                WHEN g.type_note = 'rattrapage' THEN g.grade * 0.4
+                                ELSE 0
+                            END
+                        ) * sub.credit
+                    ) / SUM(sub.credit) DESC) AS rank_in_class
+                FROM grades g
+                JOIN students s ON g.student_id = s.id
+                JOIN subjects sub ON g.subject_id = sub.id
+                WHERE s.class_id = :class_id 
+                GROUP BY g.student_id, s.class_id;
+
+            ";
+    
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':class_id', $classId, PDO::PARAM_INT);
+            $stmt->execute();
+    
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            // Trouver les informations pour l'étudiant spécifié
+            foreach ($results as $row) {
+                if ($row['student_id'] == $studentId) {
+                    return [
+                        'rank' => $row['rank_in_class'],
+                        'average' => $row['weighted_average']
+                    ];
+                }
+            }
+    
+            // Si l'étudiant n'est pas trouvé
+            return null;
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            return ['error' => $e->getMessage()];
+        }
+    }
+    
+    
+    
+    
+    
+}
+
+
 
