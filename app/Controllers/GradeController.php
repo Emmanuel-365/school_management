@@ -25,7 +25,7 @@ class GradeController {
 
 
     public function readAllGradesByLevel($level) {
-        return $this->gradeModel->findBy("level", $level);
+        return $this->gradeModel->readAllByLevel($level);
     }
 
     public function readAllGradesBySubject($subject_id) {

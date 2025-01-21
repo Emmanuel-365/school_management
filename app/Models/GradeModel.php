@@ -17,5 +17,16 @@ class GradeModel extends Model {
     public function __construct($db) {
         parent::__construct($db);
     }
+
+    public function readAllByLevel($level){
+        $sql = "SELECT g.* FROM Subjects s
+                JOIN Grades g ON s.id = g.subject_id
+                WHERE s.level = :level ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':level', $level);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_CLASS, get_class($this), [$this->db]);
+        return $stmt->fetchAll();
+    }
 }
 ?>

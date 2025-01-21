@@ -2,6 +2,7 @@
 
 use App\Config\Database;
 use App\Controllers\BulletinController;
+use App\Controllers\ClassController;
 use App\Controllers\GradeController;
 use App\Controllers\StudentController;
 
@@ -14,6 +15,7 @@ $db = $database->getConnection();
 $bulletinController = new BulletinController($db);
 $gradeController = new GradeController($db);
 $studentController = new StudentController($db);
+$classController = new ClassController($db );   
 
 // Lire tous les bulletins
 $bulletins = $bulletinController->readAllBulletins();
@@ -30,21 +32,19 @@ $bulletins = $bulletinController->readAllBulletins();
 <table>
     <tr>
         <th>ID</th>
-        <th>Student</th>
-        <th>Class</th>
-        <th>Period</th>
-        <th>Issue Date</th>
-        <th>Comments</th>
+        <th data-translate="student">Student</th>
+        <th data-translate="class">Class</th>
+        <th data-translate="period">Period</th>
+        <th data-translate="issue">Issue Date</th>
         <th>Actions</th>
     </tr>
     <?php foreach ($bulletins as $bulletin): ?>
         <tr>
             <td><?php echo $bulletin->id; ?></td>
-            <td><?php echo $bulletin->student_id; ?></td>
-            <td><?php echo $bulletin->class_id; ?></td>
+            <td><?php echo $studentController->readStudentWithUsersInformations($bulletin->student_id)->first_name . ' ' . $studentController->readStudentWithUsersInformations($bulletin->student_id)->last_name ; ?></td>
+            <td><?php echo $classController->readClass($bulletin->class_id)->name; ?></td>
             <td><?php echo $bulletin->period; ?></td>
             <td><?php echo $bulletin->issue_date; ?></td>
-            <td><?php echo $bulletin->comments; ?></td>
             <td>
                 <a href="/bulletins/bulletin?student_id=<?php echo $bulletin->student_id; ?>" class="action-button see">
                     <i class="fas fa-eye"></i>
@@ -87,7 +87,6 @@ $bulletins = $bulletinController->readAllBulletins();
         <th data-translate="class">Class</th>
         <th data-translate="period">Period</th>
         <th data-translate="issue">Issue Date</th>
-        <th data-translate="comments">Comments</th>
         <th>Actions</th>
             </tr>
 
@@ -97,7 +96,6 @@ $bulletins = $bulletinController->readAllBulletins();
                     <td>${bulletin.class_id}</td>
                     <td>${bulletin.period}</td>
                     <td>${bulletin.issue_date}</td>
-                    <td>${bulletin.comments}</td>
                     <td>
                         <a href="/bulletins/bulletin?student_id=${bulletin.student_id}" class="action-button see">
                             <i class="fas fa-eye"></i>

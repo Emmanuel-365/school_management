@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'name' => $_POST['name'],
         'level' => $_POST['level'],
         'teacher_id' => null,
+        'credit' => $_POST['credit'],
     ];
     
     // Ajouter `teacher_id` uniquement si ce n'est pas "aucun"
@@ -75,10 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option value="Master 2" <?php echo isset($subject) && $subject->level == 'Master 2' ? 'selected' : ''; ?>>Master 2</option>
         </select>
             </div>
+            <div class="form-group">
+                <label for="credit">Credit</label>
+                <input type="number" name="credit" id="credit" value="<?php echo isset($subject) ? $subject->credit : ''; ?>" required>
+            </div>
         </div>
         <center>
         <div class="form-group center">
-        <button type="submit">Update Subject</button>
+        <button type="submit" >Update Subject</button>
         </div>
         </center>
     </form>

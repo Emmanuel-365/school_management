@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = [
         'name' => $_POST['name'],
         'level' => $_POST['level'],
+        'credit' => $_POST['credit'],
     ];
     
     // Ajouter `teacher_id` uniquement si ce n'est pas "aucun"
@@ -48,24 +49,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group dynamic-dropdown">
             <label for="teacher_id">Teacher:</label>
-            <input type="text" id="teacher_id" name="teacher_id" placeholder="Ex: Batchato">
-            <ul class="options">
+            <!-- <input type="text" id="teacher_id" name="teacher_id" placeholder="Ex: Batchato"> -->
+            <select id="teacher_id" name="teacher_id" required>
             <?php foreach ($teachers as $teacher): ?>
-                        <li value="<?php echo $teacher->id; ?>"><?php echo $teacher->first_name . ' ' . $teacher->last_name; ?></li>
-                    <?php endforeach; ?>
-                </ul>
+                <option value="<?php echo $teacher->id; ?>" <?php echo isset($bulletin) && $bulletin->teacher_id == $teacher->id ? 'selected' : ''; ?>><?php echo $teacher->first_name . ' ' . $teacher->last_name; ?></option>
+            <?php endforeach; ?>
+            </select>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
             <label for="level">Level:</label>
-        <select id="level" name="level" required>
-            <option value="Bachelor 1">Bachelor 1</option>
-            <option value="Bachelor 2">Bachelor 2</option>
-            <option value="Bachelor 3">Bachelor 3</option>
-            <option value="Master 1">Master 1</option>
-            <option value="Master 2">Master 2</option>
-        </select>
+            <select id="level" name="level" required>
+                <option value="Bachelor 1">Bachelor 1</option>
+                <option value="Bachelor 2">Bachelor 2</option>
+                <option value="Bachelor 3">Bachelor 3</option>
+                <option value="Master 1">Master 1</option>
+                <option value="Master 2">Master 2</option>
+            </select>
+            </div>
+            <div class="form-group">
+                <label for="credit">Credit</label>
+                <input type="number" name="credit" id="credit">
             </div>
         </div>
         <center>

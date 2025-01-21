@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Erreur:', error);
-            addMessage('bot', 'Désolé, une erreur s\'est produite. Veuillez réessayer.', true);
+            addMessage('bot', 'Désolé, une erreur s\'est produite ou vous n\'avez pas encore de notes disponibles. Veuillez réessayer.', true);
         } finally {
             isWaitingForResponse = false;
             userInput.disabled = false;
