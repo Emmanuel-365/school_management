@@ -279,5 +279,6 @@ class StudentController {
         return $this->studentModel->getStudentRankAndAverage($studentId, $classId);
     }
 
+
 }
 ?>

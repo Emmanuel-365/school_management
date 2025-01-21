@@ -25,6 +25,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
                         data-translate="payment"></span></a></li>
             <li><a href="/bulletins" id="nav-bulletins"><i class="fa-solid fa-graduation-cap"></i> <span
                         data-translate="bulletin"></span></a></li>
+            <li><a href="/classement" id="nav-classement"><i class="fa-solid fa-graduation-cap"></i> <span
+                        data-translate="classement">Classement</span></a></li>
             <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> <span
                         data-translate="logout"></span></a></li>
         </ul>
