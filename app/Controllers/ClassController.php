@@ -35,5 +35,9 @@ class ClassController {
     public function deleteClass($id) {
         return $this->classModel->delete($id);
     }
+
+    public function getClassRanksAndAverages($classId){
+        return $this->classModel->getClassRanksAndAverages($classId);
+    }
 }
 ?>

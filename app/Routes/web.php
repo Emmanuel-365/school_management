@@ -5,6 +5,7 @@ $routes = [
     '/login' => 'users/login.php',
     '/logout' => 'users/logout.php',
     '/change_password' => 'users/change_password.php',
+    '/change-password' => 'users/change_password.php',
 
     '/admin/' => 'admin/index.php', 
     '/admin' => 'admin/index.php',  
@@ -22,6 +23,7 @@ $routes = [
     '/student_card' => 'student/student_card.php',
     '/search_student' => 'students/search_student.php',
     '/chatbot' => 'student/chatbot.php',
+    '/classement' => 'admin/classement.php',
 
     '/teachers' => 'teachers/read.php',
     '/teachers/update' => 'teachers/update.php',
@@ -55,6 +57,9 @@ $routes = [
     '/send_mail' => 'bulletins/send_mail.php',
     '/sign_bulletin' => 'bulletins/sign_bulletin.php',
     '/savepdf' => 'bulletins/save_and_sign_pdf.php',
+
+    '/remplissage' => '../../remplissage.php',
+    '/remplissage_grades' => '../../remplissage_notes.php',
 
 
 

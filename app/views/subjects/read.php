@@ -54,12 +54,12 @@ foreach($subjects as $subject){
             <?php if($subject->teacher_id == $_SESSION['user_id'] || $_SESSION['user_role'] === 'admin') : ?>
             <tr>
                 <td><center><?php echo $subject->id; ?></center></td>
-                <td><center><?php echo htmlspecialchars($subject->name); ?></center></td>
+                <td><?php echo htmlspecialchars($subject->name); ?></td>
                 <td>
-                    <center><?= $subject->teacher_id !== null 
+                    <?= $subject->teacher_id !== null 
                         ? htmlspecialchars($teacherController->readTeacherWithUsersInformations($subject->teacher_id)->first_name . ' ' . $teacherController->readTeacherWithUsersInformations($subject->teacher_id)->last_name) 
                         : 'aucun' 
-                    ?></center>
+                    ?>
                 </td>
                 <td><center><?= htmlspecialchars($subject->level); ?></center></td>
                 <td><center><?=$subject->credit ?? 3 ?></center></td>
@@ -81,7 +81,7 @@ foreach($subjects as $subject){
         <button id="nextPage" class="nav-button" data-translate="next"></button>
     </div>
 
-    <script>
+<!-- <script>
     const allSubjects = <?= json_encode($subjects) ?>; 
     const allTeachers = <?= json_encode($teachers) ?>;
     const isAdmin = <?= json_encode($database->isAdmin()) ?>; 
@@ -199,4 +199,4 @@ foreach($subjects as $subject){
 
     // Initialiser avec la première page
     paginateSubjects(currentPage);
-</script>
+</script> -->

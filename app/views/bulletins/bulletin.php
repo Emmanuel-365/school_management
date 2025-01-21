@@ -35,8 +35,7 @@ if (!$student) {
     exit;
 }
 $finaleGradesAndRanks = ($studentController->getRankBySubject($student->id));
-
-$rankAndAverage = $studentController->getStudentTotalAverageAndRank($student->id, $student->class_id);
+($rankAndAverage = $studentController->getStudentTotalAverageAndRank($student->id, $student->class_id));
 
 
 $subjects = $subjectController->readSubjectByLevel($classController->readClass($student->class_id)->level);
@@ -313,12 +312,12 @@ $mention = getMention($average);
     </style>
 </head>
 <body>
-<?php if(empty(!$missingIds)) : ?>
+<?php if(empty($missingIds)) : ?>
             <center>
                 <button id="downloadPdf" class="add-button">Télécharger le Bulletin</button>
                 <div class="spinner" id="spinner"></div>
                 <div class="loading-message" id="loadingMessage">Génération du bulletin en cours...</div>
-                <!-- <div class="error-message" id="errorMessage"></div> -->
+                <div class="error-message" id="errorMessage"></div>
                 <!-- <button id="sendEmailButton" class="add-button" style="background-color: var(--primary-color);">Envoyer par e-mail</button> -->
             </center>
             <?php endif ?>
@@ -334,7 +333,7 @@ $mention = getMention($average);
                     <p><strong>Classe:</strong> <?= $niveau ?></p>
                     <p><strong>Matricule:</strong> <?= $student->matricule ?></p>
                 </div>
-                <img src="<?= htmlspecialchars($user->profile_picture ?? '/images/profiles/default_profile.jpg'); ?>" alt="Photo de l'étudiant" class="student-photo">
+                <img src="<?= htmlspecialchars($user->profile_picture ==null ? '/images/profiles/default_profile.jpg' : $user->profile_picture); ?>" alt="Photo de l'étudiant" class="student-photo">
             </div>
             <div class="grades">
                 <table>
