@@ -9,8 +9,6 @@ use PHPMailer\PHPMailer\Exception;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Spipu\Html2Pdf\Html2Pdf;
-var_dump(__DIR__);
-
 
 // Initialisation de la base de données et des contrôleurs
 $database = new Database();
@@ -38,9 +36,6 @@ if (isset($_GET['student_id'])) {
             // Création du paiement et mise à jour du solde de l'étudiant
             $payment_id = $paymentController->createPayment($data);
             $payment = $paymentController->readPayment($payment_id);
-            // $remaining_fee_previous = $studentController->readStudent($_POST['student_id'])->remaining_fee;
-            // $remaining_fee_next = $remaining_fee_previous - $_POST['amount'];
-            // $studentController->updateStudent($_POST['student_id'], ["remaining_fee" => $remaining_fee_next]);
 
             // Génération du reçu et envoi par e-mail
             sendPaymentReceipt($payment, $student);
@@ -65,45 +60,92 @@ function sendPaymentReceipt($payment, $student) {
     $parent = $parentController->readParent($student->parent_id);
     $class = $classController->readClass($student->class_id);
 
+    // Créer une nouvelle instance de TCPDF
+    $pdf = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 
-    // Données pour le template HTML
-    $data = [
-        'schoolLogo' => '/uploads/keyce_logo.png', // Chemin du logo
-        'schoolName' => 'Nom de l\'École', // Nom de l'école
-        'receiptNumber' => $payment->id,
-        'studentName' => $student->first_name . ' ' . $student->last_name,
-        'studentId' => $student->id,
-        'studentClass' => $class ? $class->name : 'Non spécifiée',
-        'paymentDate' => $payment->created_at,
-        'amountPaid' => $payment->amount,
-        'remainingBalance' => $student->remaining_fee,
-    ];
+    // Définir les métadonnées du document
+    $pdf->SetCreator('Keyce Institute');
+    $pdf->SetAuthor('Keyce Institute');
+    $pdf->SetTitle('Reçu de Paiement');
+    $pdf->SetSubject('Reçu de Paiement');
+    $pdf->SetKeywords('Reçu, Paiement, Keyce');
 
-    // Générer le contenu HTML du reçu
-    ob_start();
-    extract($data);
-    include 'payment_receipt_template.php';
-    $htmlContent = ob_get_clean();
+    // Ajouter une page
+    $pdf->AddPage();
 
-    // Générer le PDF avec html2pdf
-    $pdfFilePath = __DIR__ . '/receipts/payment_receipt_' . $payment->id . '.pdf';
-    try {
-        $html2pdf = new Html2Pdf('P', 'A4', 'fr');
-        $html2pdf->writeHTML($htmlContent);
-        $html2pdf->output($pdfFilePath, 'F'); // Sauvegarde le PDF
-    } catch (Exception $e) {
-        echo 'Erreur lors de la génération du PDF : ' . $e->getMessage();
-        return;
+    // Définir les marges
+    $pdf->SetMargins(15, 15, 15);
+    $pdf->SetHeaderMargin(10);
+    $pdf->SetFooterMargin(10);
+
+    // Couleurs personnalisées
+    $primaryColor = array(0, 102, 204); // Bleu
+    $secondaryColor = array(255, 102, 0); // Orange
+    $backgroundColor = array(245, 245, 245); // Gris clair
+
+    // Ajouter un logo
+    $logoPath = __DIR__ . '/uploads/keyce_logo.png'; // Chemin du logo
+    if (file_exists($logoPath)) {
+        $pdf->Image($logoPath, 15, 10, 30, 0, 'PNG');
     }
 
-    // Configuration de l'envoi par e-mail avec PHPMailer
+    // Titre du document
+    $pdf->SetFont('helvetica', 'B', 18);
+    $pdf->SetTextColor($primaryColor[0], $primaryColor[1], $primaryColor[2]);
+    $pdf->Cell(0, 10, 'Reçu de Paiement', 0, 1, 'C');
+    $pdf->Ln(10);
+
+    // Informations de l'étudiant
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(0, 0, 0); // Noir
+    $pdf->Cell(0, 10, 'Informations de l\'Étudiant', 0, 1);
+    $pdf->SetFont('helvetica', '', 12);
+
+    // Tableau pour les informations de l'étudiant
+    $pdf->SetFillColor($backgroundColor[0], $backgroundColor[1], $backgroundColor[2]);
+    $pdf->SetDrawColor(200, 200, 200); // Gris clair pour les bordures
+    $pdf->Cell(40, 10, 'Nom', 1, 0, 'L', 1);
+    $pdf->Cell(0, 10, $student->first_name . ' ' . $student->last_name, 1, 1, 'L', 1);
+    $pdf->Cell(40, 10, 'Classe', 1, 0, 'L', 1);
+    $pdf->Cell(0, 10, ($class ? $class->name : 'Non spécifiée'), 1, 1, 'L', 1);
+    $pdf->Cell(40, 10, 'ID Étudiant', 1, 0, 'L', 1);
+    $pdf->Cell(0, 10, $student->id, 1, 1, 'L', 1);
+    $pdf->Ln(10);
+
+    // Informations du paiement
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->Cell(0, 10, 'Détails du Paiement', 0, 1);
+    $pdf->SetFont('helvetica', '', 12);
+
+    // Tableau pour les détails du paiement
+    $pdf->SetFillColor($backgroundColor[0], $backgroundColor[1], $backgroundColor[2]);
+    $pdf->Cell(60, 10, 'Numéro de Reçu', 1, 0, 'L', 1);
+    $pdf->Cell(0, 10, $payment->id, 1, 1, 'L', 1);
+    $pdf->Cell(60, 10, 'Date de Paiement', 1, 0, 'L', 1);
+    $pdf->Cell(0, 10, $payment->created_at, 1, 1, 'L', 1);
+    $pdf->Cell(60, 10, 'Montant Payé', 1, 0, 'L', 1);
+    $pdf->Cell(0, 10, $payment->amount . ' FCFA', 1, 1, 'L', 1);
+    $pdf->Cell(60, 10, 'Solde Restant', 1, 0, 'L', 1);
+    $pdf->Cell(0, 10, ($student->remaining_fee - $payment->amount) . ' FCFA', 1, 1, 'L', 1);
+    $pdf->Ln(20);
+
+    // Message de remerciement
+    $pdf->SetFont('helvetica', 'I', 12);
+    $pdf->SetTextColor($secondaryColor[0], $secondaryColor[1], $secondaryColor[2]);
+    $pdf->Cell(0, 10, 'Merci pour votre confiance !', 0, 1, 'C');
+
+    // Sauvegarder le PDF
+    $pdfFilePath = __DIR__ . '/receipts/payment_receipt_' . $payment->id . '.pdf';
+    $pdf->Output($pdfFilePath, 'F');
+
+    // Envoyer le PDF par e-mail avec PHPMailer
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com'; // Serveur SMTP
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'nguetsajunior@gmail.com'; // Email de l'expéditeur
-        $mail->Password = 'hcaenfisaltkngcf'; // Mot de passe de l'expéditeur
+        $mail->Username = 'nguetsajunior@gmail.com';
+        $mail->Password = 'hcaenfisaltkngcf';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
@@ -126,25 +168,81 @@ function sendPaymentReceipt($payment, $student) {
 }
 ?>
 
-<h3>Ajouter un paiement</h3>
-<form method="POST" action="">
-    <input type="hidden" id="student_id" name="student_id" value="<?= $_GET['student_id'] ?>">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un paiement</title>
+    <style>
+        /* Styles pour le spinner */
+        .spinner {
+            display: none; /* Masqué par défaut */
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #1e40af; /* Couleur primaire */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
 
-    <div class="form-row">
-        <div class="form-group">
-            <label for="amount">Montant:</label>
-            <input type="number" id="amount" name="amount" step="1" required max="<?= $remaining_fee ?>">
-        </div>
-    </div>
-    
-    <div class="form-row">
-        <div class="form-group">
-            <label for="remaining_fee">Frais Restants:</label>
-            <input type="number" id="remaining_fee" name="remaining_fee" value="<?= $student->remaining_fee ?>" required>
-        </div>
-    </div>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-    <div class="form-group text-center">
-        <button type="submit">Ajouter un paiement</button>
-    </div>
-</form>
+        .loading-message {
+            display: none; /* Masqué par défaut */
+            text-align: center;
+            font-size: 16px;
+            color: #1e40af; /* Couleur primaire */
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Ajouter un paiement</h3>
+    <form method="POST" action="" onsubmit="showLoading()">
+        <input type="hidden" id="student_id" name="student_id" value="<?= $_GET['student_id'] ?>">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="amount">Montant:</label>
+                <input type="number" id="amount" name="amount" step="1" required max="<?= $remaining_fee ?>">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="remaining_fee">Frais Restants:</label>
+                <input type="number" id="remaining_fee" name="remaining_fee" value="<?= $student->remaining_fee ?>" required>
+            </div>
+        </div>
+
+        <div class="form-group text-center">
+            <button type="submit">Ajouter un paiement</button>
+        </div>
+
+        <!-- Spinner et message de chargement -->
+        <div class="spinner" id="spinner"></div>
+        <div class="loading-message" id="loadingMessage">Génération du reçu en cours...</div>
+        <div class="error-message" id="errorMessage"></div>
+    </form>
+
+    <script>
+        function showLoading() {
+            // Afficher le spinner et le message de chargement
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.getElementById('errorMessage').textContent = ''; // Réinitialiser le message d'erreur
+        }
+    </script>
+</body>
+</html>

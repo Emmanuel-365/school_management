@@ -104,6 +104,8 @@ $mention = getMention($average);
             --border-color: #e5e7eb;
         }
 
+        
+
         * {
             margin: 0;
             padding: 0;
@@ -121,6 +123,36 @@ $mention = getMention($average);
             max-width: 90rem;
             margin: 40px auto;
             padding: 20px;
+        }
+
+        .spinner {
+            display: none; /* Masqué par défaut */
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-message {
+            display: none; /* Masqué par défaut */
+            text-align: center;
+            font-size: 16px;
+            color: var(--primary-color);
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
         }
 
         .bulletin {
@@ -273,13 +305,20 @@ $mention = getMention($average);
             .summary p {
                 margin-bottom: 10px;
             }
+
+            
         }
+
+        
     </style>
 </head>
 <body>
 <?php if(empty(!$missingIds)) : ?>
             <center>
                 <button id="downloadPdf" class="add-button">Télécharger le Bulletin</button>
+                <div class="spinner" id="spinner"></div>
+                <div class="loading-message" id="loadingMessage">Génération du bulletin en cours...</div>
+                <!-- <div class="error-message" id="errorMessage"></div> -->
                 <!-- <button id="sendEmailButton" class="add-button" style="background-color: var(--primary-color);">Envoyer par e-mail</button> -->
             </center>
             <?php endif ?>
@@ -301,7 +340,7 @@ $mention = getMention($average);
                 <table>
                     <thead>
                         <tr>
-                            <th data-translate="subject">Matière</th>
+                            <th>Matière</th>
                             <th data-translate="grade">Note</th>
                             <th>Credit</th>
                             <th>Rang</th>
@@ -352,53 +391,69 @@ $mention = getMention($average);
 
 <script>
    document.getElementById('downloadPdf').addEventListener('click', async () => {
-    const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const element = document.querySelector('.container');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const element = document.querySelector('.container');
 
-        html2canvas(element, {
-            useCORS: true,
-            logging: true,
-            allowTaint: true,
-        }).then(async function (canvas) {
-            const imgData = canvas.toDataURL('image/jpeg', 1.0);
-            doc.addImage(imgData, 'JPEG', 10, 10, 180, 0);
-        try{
-            // Convertir le PDF en blob
-            const pdfBlob = doc.output('blob');
-        console.log('PDF généré :', pdfBlob);
+            // Afficher le spinner et le message de chargement
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.getElementById('errorMessage').textContent = ''; // Réinitialiser le message d'erreur
 
-        // Envoyer le PDF au serveur
-        const formData = new FormData();
-        formData.append('pdf', pdfBlob, 'bulletin.pdf');
-        formData.append('parent_email', 'emmanuelscre1@gmail.com');
-        formData.append('student_email', 'plazarecrute@gmail.com');
+            try {
+                const canvas = await html2canvas(element, {
+                    useCORS: true,
+                    logging: true,
+                    allowTaint: true,
+                });
 
-        const response = await fetch('/sign_bulletin', {
-            method: 'POST',
-            body: formData
+                const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                doc.addImage(imgData, 'JPEG', 10, 10, 180, 0);
+
+                // Convertir le PDF en blob
+                const pdfBlob = doc.output('blob');
+                console.log('PDF généré :', pdfBlob);
+
+                // Envoyer le PDF au serveur
+                const formData = new FormData();
+                formData.append('pdf', pdfBlob, 'bulletin.pdf');
+                formData.append('parent_email', 'emmanuelscre1@gmail.com');
+                formData.append('student_email', 'plazarecrute@gmail.com');
+
+                const response = await fetch('/sign_bulletin', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const responseText = await response.text();
+                console.log('Réponse brute du serveur :', responseText);
+                console.log('Statut de la réponse :', response.status);
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la signature du bulletin.');
+                }
+
+                const result = JSON.parse(responseText);
+                console.log('Réponse du serveur :', result);
+
+                if (result.success) {
+                    alert('Le bulletin signé a été généré avec succès.');
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = result.file_url;
+                    downloadLink.download = 'bulletin_signed.pdf';
+                    downloadLink.click();
+                } else {
+                    throw new Error(result.message || 'Erreur inconnue lors de la signature.');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi ou de la génération :', error);
+                document.getElementById('errorMessage').textContent = `Erreur : ${error.message}`;
+            } finally {
+                // Masquer le spinner et le message de chargement
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('loadingMessage').style.display = 'none';
+            }
         });
-        const responseText = await response.text();
-        console.log('reponse brute du serveur :', responseText);
-        console.log('Statut de la réponse :', response.status);
-        const result = await response.json();
-        console.log('Réponse du serveur :', result);
-
-        if (response.ok && result.success) {
-            alert('Le bulletin signé a été généré avec succès.');
-            const downloadLink = document.createElement('a');
-            downloadLink.href = result.file_url;
-            downloadLink.download = 'bulletin_signed.pdf';
-            downloadLink.click();
-        } else {
-            alert(`Erreur lors de la signature : ${result.message}`);
-        }
-    } catch (error) {
-        console.error('Erreur lors de l\'envoi ou de la génération :', error);
-        alert('Une erreur est survenue lors de l\'envoi ou de la génération du bulletin.');
-    }
-})});
-
 </script>
 
 
