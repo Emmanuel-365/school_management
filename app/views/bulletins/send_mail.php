@@ -18,8 +18,8 @@ function sendEmail($studentEmail, $parentEmail, $pdfData) {
         $mail->SMTPDebug = 2; // Affiche les détails de la connexion
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'nguetsajunior@gmail.com';  // À remplacer par un email valide
-        $mail->Password = 'hcaenfisaltkngcf';     // À remplacer par un mot de passe valide
+        $mail->Username = email;  // À remplacer par un email valide
+        $mail->Password = mot_de_passe;     // À remplacer par un mot de passe valide
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
